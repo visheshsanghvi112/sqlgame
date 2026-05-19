@@ -12,7 +12,7 @@ export interface Case {
     solutionQuery?: string; // Optional regex or simple check
     expectedAnswer: string; // The exact value user needs to submit (e.g., suspect name)
     hint: string;
-    difficulty: 'Easy' | 'Medium' | 'Hard';
+    difficulty: 'Easy' | 'Medium' | 'Hard' | 'Intermediate';
 }
 
 export interface QueryResult {

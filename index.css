@@ -6,15 +6,15 @@
 }
 
 :root {
-    /* Light Mode (GitHub/VSCode Light inspired) */
-    --color-terminal-bg: #ffffff;
-    --color-terminal-text: #24292f;
-    --color-terminal-green: #1a7f37;
-    --color-terminal-blue: #0969da;
-    --color-terminal-border: #d0d7de;
-    --color-terminal-accent: #0969da;
-    --color-terminal-surface: #f6f8fa;
-    --color-terminal-highlight: #ddf4ff;
+    /* Light Mode (Modern SaaS / Clean) */
+    --color-terminal-bg: #F8FAFC;      /* Slate 50 - Softer background */
+    --color-terminal-text: #334155;    /* Slate 700 - Softer text than pure black */
+    --color-terminal-green: #16A34A;   /* Green 600 */
+    --color-terminal-blue: #2563EB;    /* Blue 600 */
+    --color-terminal-border: #CBD5E1;  /* Slate 300 - More visible borders */
+    --color-terminal-accent: #2563EB;  /* Blue 600 */
+    --color-terminal-surface: #FFFFFF; /* White - Distinct surface */
+    --color-terminal-highlight: #EFF6FF; /* Blue 50 */
 }
 
 .dark {

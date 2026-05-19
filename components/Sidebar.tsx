@@ -111,75 +111,89 @@ const Sidebar: React.FC<SidebarProps> = ({
     };
 
     // Helper to render a case list item
-    const CaseItem = ({ c }: { c: Case }) => {
+    const CaseItem: React.FC<{ c: Case }> = ({ c }) => {
         const isCompleted = completedCases.includes(c.id);
         const isActive = c.id === currentCase.id;
         
-        // Determine if "sequentially locked" (visual only)
+        // Determine if "sequentially locked"
         // Find index in the FULL list to check previous
         const globalIndex = CASES.findIndex(item => item.id === c.id);
         const previousCase = globalIndex > 0 ? CASES[globalIndex - 1] : null;
         const isSequentiallyLocked = previousCase && !completedCases.includes(previousCase.id) && !isCompleted;
 
         return (
-            <button 
-                onClick={() => onCaseSelect(c.id)}
-                disabled={false}
-                title={c.title}
-                className={`
-                    group w-full flex items-center gap-3 p-2 rounded-lg text-sm transition-all duration-200 relative overflow-hidden mb-1
-                    ${isActive 
-                        ? 'bg-terminal-blue/10 text-terminal-text shadow-[inset_0_0_0_1px_rgba(var(--color-terminal-blue-rgb),0.4)] border border-terminal-blue/30' 
-                        : 'text-terminal-text/60 hover:bg-terminal-surface hover:text-terminal-text border border-transparent'}
-                    ${isSequentiallyLocked && !isActive ? 'opacity-75 grayscale-[0.3]' : ''}
-                    cursor-pointer
-                `}
-            >
-                {isActive && (
-                    <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-terminal-blue shadow-[0_0_8px_var(--color-terminal-blue)]"></div>
-                )}
+            <div className="relative pl-3">
+                {/* Tree Line Horizontal */}
+                <div className={`absolute left-0 top-1/2 w-2 h-px -translate-y-1/2 ${isSequentiallyLocked ? 'bg-terminal-border/10' : 'bg-terminal-border/30'}`}></div>
+                
+                <button 
+                    onClick={() => !isSequentiallyLocked && onCaseSelect(c.id)}
+                    disabled={isSequentiallyLocked}
+                    title={isSequentiallyLocked ? "Complete previous case to unlock" : c.title}
+                    className={`
+                        group w-full flex items-center gap-3 p-2 rounded-lg text-sm transition-all duration-200 relative overflow-hidden mb-1
+                        ${isActive 
+                            ? 'bg-terminal-blue/10 text-terminal-text shadow-[inset_0_0_0_1px_rgba(var(--color-terminal-blue-rgb),0.4)] border border-terminal-blue/30' 
+                            : ''}
+                        ${!isActive && !isSequentiallyLocked
+                            ? 'text-terminal-text/60 hover:bg-terminal-surface hover:text-terminal-text border border-transparent cursor-pointer'
+                            : ''}
+                        ${isSequentiallyLocked 
+                            ? 'text-terminal-text/20 bg-terminal-bg/20 border border-transparent cursor-not-allowed grayscale' 
+                            : ''}
+                    `}
+                >
+                    {isActive && (
+                        <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-terminal-blue shadow-[0_0_8px_var(--color-terminal-blue)]"></div>
+                    )}
 
-                <div className={`
-                    flex-shrink-0 w-6 h-6 flex items-center justify-center rounded transition-colors relative
-                    ${isCompleted && !isActive ? 'text-terminal-green bg-terminal-green/10' : ''}
-                    ${isActive ? 'text-terminal-blue' : ''}
-                    ${!isCompleted && !isActive ? 'text-terminal-text/40 bg-terminal-surface' : ''}
-                `}>
-                    {isCompleted ? <IconCheck className="w-3.5 h-3.5" /> : 
-                     isActive ? <IconFolder className="w-3.5 h-3.5" /> :
-                     isSequentiallyLocked ? <IconUnlock className="w-3.5 h-3.5 opacity-50" /> :
-                     <IconFolder className="w-3.5 h-3.5" />}
-                </div>
-
-                {!isCollapsed && (
-                    <div className="flex-1 text-left truncate flex justify-between items-center">
-                        <div className={`font-medium truncate pr-2 text-xs ${isSequentiallyLocked ? 'italic' : ''}`}>
-                            {c.title}
-                        </div>
-                        
-                        {/* Difficulty Dot */}
-                        {difficultyFilter === 'ALL' && (
-                            <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-sm ${
-                                c.difficulty === 'Easy' ? 'bg-green-500' : 
-                                c.difficulty === 'Medium' ? 'bg-yellow-500' : 
-                                c.difficulty === 'Intermediate' ? 'bg-orange-500' : 'bg-red-500'
-                            }`} title={c.difficulty}></div>
-                        )}
+                    <div className={`
+                        flex-shrink-0 w-6 h-6 flex items-center justify-center rounded transition-colors relative
+                        ${isCompleted && !isActive ? 'text-terminal-green bg-terminal-green/10' : ''}
+                        ${isActive ? 'text-terminal-blue' : ''}
+                        ${!isCompleted && !isActive && !isSequentiallyLocked ? 'text-terminal-text/40 bg-terminal-surface' : ''}
+                        ${isSequentiallyLocked ? 'text-terminal-text/20 bg-terminal-surface/10' : ''}
+                    `}>
+                        {isCompleted ? <IconCheck className="w-3.5 h-3.5" /> : 
+                         isActive ? <IconFolder className="w-3.5 h-3.5" /> :
+                         isSequentiallyLocked ? <IconLock className="w-3.5 h-3.5" /> :
+                         <IconFolder className="w-3.5 h-3.5" />}
                     </div>
-                )}
-            </button>
+
+                    {!isCollapsed && (
+                        <div className="flex-1 text-left truncate flex justify-between items-center">
+                            <div className={`font-medium truncate pr-2 text-xs ${isSequentiallyLocked ? 'italic' : ''}`}>
+                                {c.title}
+                            </div>
+                            
+                            {/* Difficulty Dot */}
+                            {difficultyFilter === 'ALL' && !isSequentiallyLocked && (
+                                <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-sm ${
+                                    c.difficulty === 'Easy' ? 'bg-green-500' : 
+                                    c.difficulty === 'Medium' ? 'bg-yellow-500' : 
+                                    c.difficulty === 'Intermediate' ? 'bg-orange-500' : 'bg-red-500'
+                                }`} title={c.difficulty}></div>
+                            )}
+                            
+                            {isSequentiallyLocked && (
+                                <IconLock className="w-3 h-3 text-terminal-text/10" />
+                            )}
+                        </div>
+                    )}
+                </button>
+            </div>
         );
     };
 
     return (
         <div 
             className={`
-                relative h-full bg-terminal-bg/95 backdrop-blur-md border-r border-terminal-border flex flex-col transition-all duration-300 ease-in-out z-20 shadow-2xl
-                ${isCollapsed ? 'w-16' : 'w-72'}
+                fixed md:relative h-full bg-terminal-surface/95 dark:bg-terminal-bg/95 backdrop-blur-md border-r border-terminal-border flex flex-col transition-all duration-300 ease-in-out z-50 shadow-xl
+                ${isCollapsed ? '-translate-x-full md:translate-x-0 md:w-16 w-64' : 'translate-x-0 w-72'}
             `}
         >
             {/* 1. Header & Logo */}
-            <div className={`h-16 flex items-center border-b border-terminal-border bg-terminal-bg shrink-0 ${isCollapsed ? 'justify-center' : 'justify-between px-4'}`}>
+            <div className={`h-16 flex items-center border-b border-terminal-border bg-terminal-surface dark:bg-terminal-bg shrink-0 ${isCollapsed ? 'justify-center' : 'justify-between px-4'}`}>
                 {!isCollapsed && (
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-terminal-blue rounded-full animate-pulse shadow-[0_0_8px_var(--color-terminal-blue)]"></div>
@@ -249,7 +263,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 total={academyCases.length}
                             />
                             
-                            <div className={`space-y-0.5 overflow-hidden transition-all duration-300 ${isAcademyOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className={`
+                                space-y-0.5 overflow-hidden transition-all duration-300 
+                                ${isAcademyOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}
+                                ml-2 pl-2 border-l border-terminal-border/20
+                            `}>
                                 {academyCases.map(c => <CaseItem key={c.id} c={c} />)}
                             </div>
                         </div>
@@ -266,7 +284,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 total={interviewCases.length}
                             />
                             
-                            <div className={`space-y-0.5 overflow-hidden transition-all duration-300 ${isInterviewOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className={`
+                                space-y-0.5 overflow-hidden transition-all duration-300 
+                                ${isInterviewOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}
+                                ml-2 pl-2 border-l border-terminal-border/20
+                            `}>
                                 {interviewCases.map(c => <CaseItem key={c.id} c={c} />)}
                             </div>
                         </div>
@@ -283,7 +305,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 total={cyberCases.length}
                             />
                             
-                            <div className={`space-y-0.5 overflow-hidden transition-all duration-300 ${isCyberOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className={`
+                                space-y-0.5 overflow-hidden transition-all duration-300 
+                                ${isCyberOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}
+                                ml-2 pl-2 border-l border-terminal-border/20
+                            `}>
                                 {cyberCases.map(c => <CaseItem key={c.id} c={c} />)}
                             </div>
                         </div>
@@ -305,7 +331,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 total={fieldCases.length}
                             />
                             
-                            <div className={`space-y-0.5 overflow-hidden transition-all duration-300 ${isFieldOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className={`
+                                space-y-0.5 overflow-hidden transition-all duration-300 
+                                ${isFieldOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}
+                                ml-2 pl-2 border-l border-terminal-border/20
+                            `}>
                                 {fieldCases.map(c => <CaseItem key={c.id} c={c} />)}
                             </div>
                         </div>
@@ -334,11 +364,18 @@ const Sidebar: React.FC<SidebarProps> = ({
                             </span>
                         </button>
                         
-                        <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isSchemaOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <div className={`
+                            space-y-1 overflow-hidden transition-all duration-300 
+                            ${isSchemaOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}
+                            ml-2 pl-2 border-l border-terminal-border/20
+                        `}>
                             {TABLES.map(table => {
                                 const isExpanded = expandedTables.includes(table.tableName);
                                 return (
-                                    <div key={table.tableName} className="group relative">
+                                    <div key={table.tableName} className="group relative pl-3">
+                                        {/* Tree Line Horizontal */}
+                                        <div className="absolute left-0 top-[14px] w-2 h-px bg-terminal-border/30"></div>
+
                                         <button 
                                             onClick={() => toggleTable(table.tableName)}
                                             className="w-full flex items-center gap-2 px-2 py-1.5 hover:bg-terminal-surface rounded transition-colors text-left"
@@ -349,9 +386,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                                         </button>
                                         
                                         {/* Inline Columns */}
-                                        <div className={`pl-6 space-y-0.5 overflow-hidden transition-all duration-200 ${isExpanded ? 'max-h-[500px] py-1' : 'max-h-0'}`}>
+                                        <div className={`
+                                            pl-3 space-y-0.5 overflow-hidden transition-all duration-200 
+                                            ${isExpanded ? 'max-h-[500px] py-1' : 'max-h-0'}
+                                            ml-2 border-l border-terminal-border/20
+                                        `}>
                                             {table.columns.map(col => (
-                                                <div key={col.name} className="flex items-center gap-2 py-0.5">
+                                                <div key={col.name} className="flex items-center gap-2 py-0.5 relative pl-3">
+                                                    {/* Tree Line Horizontal */}
+                                                    <div className="absolute left-0 top-1/2 w-2 h-px bg-terminal-border/30 -translate-y-1/2"></div>
+                                                    
                                                     <div className="w-1 h-1 rounded-full bg-terminal-text/20"></div>
                                                     <span className="text-[10px] font-mono text-terminal-text/60 flex-1">{col.name}</span>
                                                     <span className="text-[9px] font-mono text-terminal-text/30 uppercase">{col.type}</span>
@@ -390,8 +434,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                         `}
                     >
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded bg-gradient-to-tr from-gray-800 to-gray-700 flex items-center justify-center border border-gray-600 shadow-lg relative">
-                                <IconUser className="w-4 h-4 text-gray-300" />
+                            <div className="w-8 h-8 rounded bg-terminal-surface dark:bg-gradient-to-tr dark:from-gray-800 dark:to-gray-700 flex items-center justify-center border border-terminal-border dark:border-gray-600 shadow-lg relative">
+                                <IconUser className="w-4 h-4 text-terminal-text/60 dark:text-gray-300" />
                                 <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-terminal-green rounded-full border-2 border-terminal-bg"></div>
                             </div>
                             {!isCollapsed && (

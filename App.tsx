@@ -6,7 +6,9 @@ import ChatAssistant from './components/ChatAssistant';
 import SettingsModal from './components/SettingsModal';
 import SchemaModal from './components/SchemaModal';
 import HistoryModal from './components/HistoryModal';
+import Notebook from './components/Notebook';
 import { CASES } from './constants';
+import { IconMenu, IconEdit } from './components/Icons';
 import { runQuery, initDB } from './services/dbService';
 import { QueryResult } from './types';
 import { submitCaseReview, getFastHint } from './services/geminiService';
@@ -28,22 +30,6 @@ function App() {
       return (localStorage.getItem('sqlpd_theme') as 'dark' | 'light') || 'dark';
   });
 
-  // Execution State
-  const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
-  const [isExecuting, setIsExecuting] = useState(false);
-  const [answerInput, setAnswerInput] = useState('');
-  const [feedback, setFeedback] = useState<string>('');
-  
-  // UI States
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isSchemaOpen, setIsSchemaOpen] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-
-  // Hint State
-  const [hasUsedHint, setHasUsedHint] = useState(false);
-  const [activeHint, setActiveHint] = useState<string>('');
-
   // 0. THEME EFFECT
   useEffect(() => {
     const root = document.documentElement;
@@ -58,6 +44,26 @@ function App() {
   const toggleTheme = () => {
       setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
+
+  // Execution State
+  const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [answerInput, setAnswerInput] = useState('');
+  const [feedback, setFeedback] = useState<string>('');
+  
+  // UI States
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => window.innerWidth < 768);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSchemaOpen, setIsSchemaOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isNotebookOpen, setIsNotebookOpen] = useState(false);
+
+  // Hint State
+  const [hasUsedHint, setHasUsedHint] = useState(false);
+  const [activeHint, setActiveHint] = useState<string>('');
+
+  // 0. THEME EFFECT - REMOVED (Forced Dark)
+
 
   // 1. INITIALIZATION & RESTORE
   useEffect(() => {
@@ -159,7 +165,7 @@ function App() {
       }
   };
 
-  const handleResetProgress = () => {
+  const confirmReset = () => {
       if (window.confirm("WARNING: This will wipe your badge history, profile, and reset all progress. Are you sure?")) {
           localStorage.clear();
           window.location.reload();
@@ -206,19 +212,19 @@ function App() {
           
           if (queryResult) {
               if (queryResult.error) {
-                   failMessage = "Your investigation is halted by a Syntax Error. Check the red error message in the table below.";
+                   failMessage = "⚠️ SYSTEM ERROR: Your investigation is halted by a Syntax Error. Check the console output below for details.";
               } else if (queryResult.data.length === 0) {
-                   failMessage = "Your query returned ZERO rows. You might be filtering too strictly or there is no matching data.";
+                   failMessage = "🚫 NO EVIDENCE FOUND: Your query returned 0 rows. Try loosening your WHERE clauses or checking for typos in your conditions.";
               } else {
                    const rawData = JSON.stringify(queryResult.data).toLowerCase();
                    if (rawData.includes(expected)) {
-                        failMessage = "Target Identified! The correct answer IS listed in your query results. Read the table carefully and submit the exact value.";
+                        failMessage = "🔍 TARGET SPOTTED: The correct answer is IN your query results! Review the table carefully and submit the exact value.";
                    } else {
-                        failMessage = "Query executed successfully, but the answer is NOT in the results. You are asking the wrong questions.";
+                        failMessage = "❌ COLD TRAIL: The answer is NOT in your query results. You are looking at the wrong data. Try a different query.";
                    }
               }
           } else {
-              failMessage = "You haven't run any queries yet. Don't guess—investigate! Use the Query Console.";
+              failMessage = "🕵️‍♂️ NO DATA: You haven't run any queries yet. Use the SQL Editor to find evidence before guessing.";
           }
           
           setFeedback(failMessage);
@@ -280,7 +286,7 @@ function App() {
                             <span className="text-sm opacity-70 block">Congratulations, {officerName}. Your record has been permanently added to the hall of fame.</span>
                         </div>
                         <button 
-                            onClick={handleResetProgress}
+                            onClick={confirmReset}
                             className="px-8 py-3 mt-8 text-terminal-text hover:text-terminal-text border border-terminal-border rounded-lg hover:bg-terminal-surface transition-all"
                         >
                             Reset Career (Clear Data)
@@ -325,7 +331,7 @@ function App() {
         badgeId={badgeId}
         completedCount={completedCases.length}
         totalCases={CASES.length}
-        onReset={handleResetProgress}
+        onReset={confirmReset}
         officerName={officerName}
         setOfficerName={setOfficerName}
       />
@@ -340,6 +346,12 @@ function App() {
         onClose={() => setIsHistoryOpen(false)}
         history={queryHistory}
         onSelectQuery={setSqlCode}
+      />
+
+      <Notebook 
+        isOpen={isNotebookOpen}
+        onClose={() => setIsNotebookOpen(false)}
+        theme={theme}
       />
 
       <Sidebar 
@@ -357,13 +369,20 @@ function App() {
       
       <div className="flex-1 flex flex-col min-w-0 relative">
         {/* Subtle Background Grid for the Workspace */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-terminal-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-terminal-border)_1px,transparent_1px)] bg-[size:32px_32px] opacity-[0.03] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-terminal-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-terminal-border)_1px,transparent_1px)] bg-[size:32px_32px] opacity-40 dark:opacity-[0.03] pointer-events-none"></div>
 
         {/* Header */}
-        <div className="p-6 border-b border-terminal-border bg-terminal-bg/50 backdrop-blur-sm z-10 transition-colors">
+        <div className="p-6 border-b border-terminal-border bg-terminal-surface/80 dark:bg-terminal-bg/50 backdrop-blur-md z-10 transition-colors shadow-sm dark:shadow-none">
             <div className="flex justify-between items-start">
-                <div className="flex-1 mr-4">
-                    <div className="flex items-center gap-3 mb-2">
+                <div className="flex-1 mr-4 flex items-start">
+                    <button 
+                        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                        className="md:hidden mr-4 mt-1 p-1 text-terminal-text/60 hover:text-terminal-text hover:bg-white/5 rounded transition-colors"
+                    >
+                        <IconMenu className="w-6 h-6" />
+                    </button>
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
                             currentCase.difficulty === 'Easy' ? 'border-green-800 bg-green-900/20 text-green-500' :
                             currentCase.difficulty === 'Medium' ? 'border-yellow-800 bg-yellow-900/20 text-yellow-500' :
@@ -378,11 +397,11 @@ function App() {
                     <h2 className="text-3xl font-bold text-terminal-text mb-4 tracking-tight">
                         {currentCase.title}
                     </h2>
-                    <div className="bg-black/20 p-5 rounded-xl border border-white/10 shadow-inner max-h-[40vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                    <div className="bg-terminal-surface/50 dark:bg-black/20 p-5 rounded-xl border border-terminal-border dark:border-white/10 shadow-inner max-h-[30vh] overflow-y-auto scrollbar-thin scrollbar-thumb-terminal-border dark:scrollbar-thumb-white/10 scrollbar-track-transparent">
                         {currentCase.briefing.split(/(\*\*.*?\*\*)/g).map((part, i) => {
                             if (part.startsWith('**') && part.endsWith('**')) {
                                 return (
-                                    <h3 key={i} className="text-terminal-blue text-xs font-bold uppercase tracking-widest mt-4 first:mt-0 mb-2 border-b border-terminal-blue/20 pb-1 sticky top-0 bg-black/90 backdrop-blur-sm py-1 z-10">
+                                    <h3 key={i} className="text-terminal-blue text-xs font-bold uppercase tracking-widest mt-4 first:mt-0 mb-2 border-b border-terminal-blue/20 pb-1 sticky top-0 bg-terminal-bg/95 dark:bg-black/90 backdrop-blur-sm py-1 z-10">
                                         {part.slice(2, -2)}
                                     </h3>
                                 );
@@ -392,7 +411,7 @@ function App() {
                             // Detect Schema/ASCII tables (must have border characters)
                             if (part.includes('+---') && part.includes('|')) {
                                 return (
-                                    <div key={i} className="font-mono text-xs leading-normal text-terminal-text/80 bg-black/40 p-3 rounded border border-white/5 overflow-x-auto whitespace-pre mb-3 shadow-sm">
+                                    <div key={i} className="font-mono text-xs leading-normal text-terminal-text/80 bg-terminal-surface dark:bg-black/40 p-3 rounded border border-terminal-border dark:border-white/5 overflow-x-auto whitespace-pre mb-3 shadow-sm">
                                         {part.trim()}
                                     </div>
                                 );
@@ -406,10 +425,23 @@ function App() {
                             );
                         })}
                     </div>
+                    </div>
                 </div>
                 
                 <div className="flex flex-col items-end gap-2 shrink-0">
                     <div className="flex gap-2">
+                        <button 
+                            onClick={() => setIsNotebookOpen(!isNotebookOpen)}
+                            className={`
+                                px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider border transition-all flex items-center gap-2
+                                ${isNotebookOpen 
+                                    ? 'bg-terminal-blue text-white border-terminal-blue shadow-lg shadow-terminal-blue/20' 
+                                    : 'bg-terminal-surface border-terminal-border text-terminal-text/80 hover:text-terminal-text hover:bg-terminal-surface/80'}
+                            `}
+                        >
+                            <IconEdit className="w-3 h-3" />
+                            NOTEBOOK
+                        </button>
                         <button 
                             onClick={() => setIsSchemaOpen(true)}
                             className="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-terminal-surface border border-terminal-border hover:bg-white/5 transition-all text-terminal-text/80 hover:text-terminal-text"
@@ -460,8 +492,9 @@ function App() {
                 isChecking={gameState === 'CHECKING'}
                 onFormat={handleFormatSql}
                 onShowHistory={() => setIsHistoryOpen(true)}
+                theme={theme}
             />
-            <ResultsTable result={queryResult} />
+            <ResultsTable result={queryResult} theme={theme} />
         </div>
       </div>
 

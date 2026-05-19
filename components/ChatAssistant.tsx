@@ -131,7 +131,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ currentCase, queryHistory
                         <div className={`flex items-end gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                             {/* Avatar */}
                             <div className={`
-                                w-6 h-6 rounded-full flex items-center justify-center shrink-0 border
+                                w-6 h-6 rounded-full flex items-center justify-center shrink-0 border shadow-sm
                                 ${msg.role === 'user' 
                                     ? 'bg-terminal-blue/20 border-terminal-blue/50 text-terminal-blue' 
                                     : 'bg-terminal-green/20 border-terminal-green/50 text-terminal-green'}
@@ -144,8 +144,8 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ currentCase, queryHistory
                                 className={`
                                     max-w-[240px] p-3 rounded-2xl text-xs leading-relaxed shadow-sm border
                                     ${msg.role === 'user' 
-                                        ? 'bg-terminal-blue/10 text-terminal-text border-terminal-blue/20 rounded-br-none' 
-                                        : 'bg-terminal-surface text-terminal-text border-terminal-border rounded-bl-none'}
+                                        ? 'bg-terminal-blue/10 text-terminal-text border-terminal-blue/20 rounded-br-none dark:bg-terminal-blue/20' 
+                                        : 'bg-white dark:bg-terminal-surface text-terminal-text border-terminal-border rounded-bl-none'}
                                     ${msg.isThinking ? 'animate-pulse' : ''}
                                 `}
                             >
@@ -168,17 +168,17 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ currentCase, queryHistory
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                         placeholder="Ask for hint..."
-                        className="flex-1 bg-terminal-bg border border-terminal-border rounded-full px-4 py-2 text-sm text-terminal-text focus:outline-none focus:border-terminal-blue font-mono transition-colors shadow-inner placeholder:text-terminal-text/30"
+                        className="flex-1 bg-white dark:bg-terminal-bg border border-terminal-border rounded-full px-4 py-2 text-sm text-terminal-text focus:outline-none focus:border-terminal-blue focus:ring-1 focus:ring-terminal-blue/50 font-mono transition-all shadow-inner placeholder:text-terminal-text/30"
                         disabled={isLoading}
                     />
                     <button 
                         onClick={handleSend}
                         disabled={isLoading || !input.trim()}
                         className={`
-                            p-2 rounded-full transition-all shadow-sm flex items-center justify-center w-10 h-10
+                            p-2 rounded-full transition-all shadow-md flex items-center justify-center w-10 h-10 border border-transparent
                             ${isLoading || !input.trim() 
                                 ? 'bg-terminal-surface text-terminal-text/30 cursor-not-allowed' 
-                                : 'bg-terminal-blue text-white hover:bg-terminal-blue/90 hover:scale-105'}
+                                : 'bg-terminal-blue text-white hover:bg-terminal-blue/90 hover:scale-105 active:scale-95'}
                         `}
                     >
                         {isLoading ? (
