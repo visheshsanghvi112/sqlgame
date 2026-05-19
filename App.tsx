@@ -10,7 +10,7 @@ import { CASES } from './constants';
 import { IconMenu, IconEdit } from './components/Icons';
 import { runQuery, initDB } from './services/dbService';
 import { QueryResult } from './types';
-import { submitCaseReview, getFastHint } from './services/geminiService';
+
 
 function App() {
   // Game State
@@ -182,7 +182,7 @@ function App() {
       if (currentCase.hint) {
           hintText = currentCase.hint;
       } else {
-          hintText = await getFastHint("Give me a hint", currentCase.briefing);
+          hintText = "💡 Review the case briefing carefully. Look for patterns in the data that match the crime description.";
       }
       setActiveHint(hintText);
   };
@@ -201,8 +201,8 @@ function App() {
       const isMatch = input === expected || (solution && input === solution);
       
       if (isMatch) {
-          submitCaseReview(JSON.stringify(currentCase), answerInput, queryHistory)
-            .then(review => setFeedback(review));
+          const review = "Case Solved! ✅ You've successfully completed this investigation. The suspect has been identified correctly.";
+          setFeedback(review);
             
           setGameState('SOLVED_ANIMATION');
       } else {
