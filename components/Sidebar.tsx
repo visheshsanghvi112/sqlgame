@@ -189,7 +189,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div 
             className={`
                 fixed lg:relative h-full bg-terminal-surface/95 dark:bg-terminal-bg/95 backdrop-blur-md border-r border-terminal-border flex flex-col transition-all duration-300 ease-in-out z-50 shadow-xl
-                ${isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16 w-64' : 'translate-x-0 w-[85%] sm:w-80'}
+                ${isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16 w-[92%] max-w-[22rem]' : 'translate-x-0 w-[92%] max-w-[22rem] lg:w-80'}
             `}
         >
             {/* 1. Header & Logo */}

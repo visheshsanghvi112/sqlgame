@@ -37,6 +37,12 @@ body {
     overflow: hidden; /* App-like feel */
 }
 
+@media (max-width: 1024px) {
+    body {
+        overflow: auto;
+    }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;

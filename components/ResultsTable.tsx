@@ -53,7 +53,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ result, theme }) => {
     }
 
     return (
-        <div className="flex-1 overflow-hidden bg-terminal-bg flex flex-col transition-colors relative border-t border-terminal-border/50 min-h-[100px]">
+        <div className="flex-[0.9] overflow-hidden bg-terminal-bg flex flex-col transition-colors relative border-t border-terminal-border/50 min-h-[200px]">
             {/* Grid Header */}
             <div className="px-2 sm:px-4 py-2 bg-terminal-surface/80 dark:bg-terminal-surface/80 backdrop-blur-sm border-b border-terminal-border flex justify-between items-center sticky top-0 z-20 shrink-0 gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">

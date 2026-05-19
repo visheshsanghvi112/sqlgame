@@ -51,7 +51,7 @@ function App() {
   const [feedback, setFeedback] = useState<string>('');
   
   // UI States
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => window.innerWidth < 768);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => window.innerWidth < 1024);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSchemaOpen, setIsSchemaOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -127,6 +127,17 @@ function App() {
       // We do NOT reset sqlCode here, giving users a scratchpad feeling across cases if they want
   }, [currentCaseIndex]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 1024) {
+                setIsSidebarCollapsed(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
   const currentCase = CASES[currentCaseIndex];
 
   const handleRunQuery = (sql: string) => {
@@ -162,6 +173,9 @@ function App() {
       if (index !== -1) {
           setCurrentCaseIndex(index);
           setGameState('READY');
+          if (window.innerWidth < 1024) {
+              setIsSidebarCollapsed(true);
+          }
       }
   };
 
@@ -324,7 +338,7 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-terminal-bg text-terminal-text font-sans transition-colors duration-300">
+    <div className="flex h-screen md:h-[100dvh] w-screen overflow-hidden bg-terminal-bg text-terminal-text font-sans transition-colors duration-300">
       <SettingsModal 
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
@@ -375,12 +389,12 @@ function App() {
           />
       )}
       
-      <div className="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
+    <div className="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
         {/* Subtle Background Grid for the Workspace */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-terminal-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-terminal-border)_1px,transparent_1px)] bg-[size:32px_32px] opacity-40 dark:opacity-[0.03] pointer-events-none"></div>
 
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-terminal-border bg-terminal-surface/80 dark:bg-terminal-bg/50 backdrop-blur-md z-10 transition-colors shadow-sm dark:shadow-none">
+        <div className="p-3 sm:p-6 border-b border-terminal-border bg-terminal-surface/80 dark:bg-terminal-bg/50 backdrop-blur-md z-10 transition-colors shadow-sm dark:shadow-none">
             <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
                 <div className="flex-1 w-full flex items-start">
                     <button 
@@ -415,7 +429,7 @@ function App() {
                     </div>
                     <div className={`
                         bg-terminal-surface/50 dark:bg-black/20 p-3 sm:p-5 rounded-xl border border-terminal-border dark:border-white/10 shadow-inner overflow-y-auto scrollbar-thin scrollbar-thumb-terminal-border dark:scrollbar-thumb-white/10 scrollbar-track-transparent transition-all duration-300
-                        ${isBriefingExpanded ? 'max-h-[60vh]' : 'max-h-[15vh] sm:max-h-[30vh]'}
+                        ${isBriefingExpanded ? 'max-h-[60vh]' : 'max-h-[12vh] sm:max-h-[28vh]'}
                     `}>
                         {currentCase.briefing.split(/(\*\*.*?\*\*)/g).map((part, i) => {
                             if (part.startsWith('**') && part.endsWith('**')) {
@@ -511,7 +525,7 @@ function App() {
         </div>
 
         {/* Main Workspace */}
-        <div className="flex-1 flex flex-col min-h-0 z-0">
+        <div className="flex-1 flex flex-col min-h-0 z-0 overflow-y-auto lg:overflow-hidden">
             <SqlEditor 
                 sql={sqlCode}
                 onChange={setSqlCode}

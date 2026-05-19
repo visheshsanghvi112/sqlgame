@@ -184,7 +184,7 @@ const SqlEditor: React.FC<SqlEditorProps> = ({
     });
 
     return (
-        <div className="flex-1 flex flex-col min-h-[150px] border-b border-terminal-border bg-terminal-bg relative group transition-all">
+        <div className="flex-[1.2] flex flex-col min-h-[230px] border-b border-terminal-border bg-terminal-bg relative group transition-all">
             {/* Toolbar */}
             <div className="bg-terminal-surface/80 px-2 sm:px-4 py-2 flex flex-wrap justify-between items-center border-b border-terminal-border backdrop-blur-md z-10 gap-2">
                 <div className="flex items-center gap-2 sm:gap-4">
