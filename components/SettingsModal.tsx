@@ -58,10 +58,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             ></div>
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-md bg-terminal-surface dark:bg-terminal-bg border border-terminal-border rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-md bg-terminal-surface dark:bg-terminal-bg border border-terminal-border rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
                 {/* Header */}
-                <div className="p-6 border-b border-terminal-border bg-terminal-bg/50 dark:bg-terminal-surface/50 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-terminal-text flex items-center gap-2">
+                <div className="p-4 sm:p-6 border-b border-terminal-border bg-terminal-bg/50 dark:bg-terminal-surface/50 flex justify-between items-center shrink-0">
+                    <h2 className="text-lg sm:text-xl font-bold text-terminal-text flex items-center gap-2">
                         <IconSettings className="w-5 h-5 text-terminal-blue" />
                         System Configuration
                     </h2>
@@ -74,7 +74,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
 
                 {/* Body */}
-                <div className="p-6 space-y-6 bg-terminal-surface dark:bg-terminal-bg">
+                <div className="p-4 sm:p-6 space-y-6 bg-terminal-surface dark:bg-terminal-bg overflow-y-auto">
                     {/* ID Card Look */}
                     <div className="bg-terminal-bg/50 dark:bg-terminal-surface p-4 rounded-lg border border-terminal-border flex items-center gap-4 shadow-sm">
                         <div className="w-16 h-16 bg-terminal-blue/10 dark:bg-terminal-blue/20 rounded-full flex items-center justify-center border-2 border-terminal-blue relative overflow-hidden shrink-0">

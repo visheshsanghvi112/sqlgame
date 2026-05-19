@@ -13,16 +13,16 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose, history, o
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 dark:bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200 transition-colors">
-            <div className="bg-terminal-bg border border-terminal-border rounded-xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl relative overflow-hidden">
+            <div className="bg-terminal-bg border border-terminal-border rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-terminal-border bg-terminal-surface/50">
+                <div className="flex items-center justify-between p-4 sm:p-6 border-b border-terminal-border bg-terminal-surface/50 shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-terminal-blue/10 rounded-lg border border-terminal-blue/20">
                             <History className="w-5 h-5 text-terminal-blue" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-terminal-text tracking-tight">Command History</h2>
-                            <p className="text-xs text-terminal-text/60 uppercase tracking-wider">Session Logs</p>
+                            <h2 className="text-lg sm:text-xl font-bold text-terminal-text tracking-tight">Command History</h2>
+                            <p className="text-[10px] text-terminal-text/60 uppercase tracking-wider">Session Logs</p>
                         </div>
                     </div>
                     <button 

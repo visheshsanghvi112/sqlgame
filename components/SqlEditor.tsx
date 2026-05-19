@@ -186,49 +186,51 @@ const SqlEditor: React.FC<SqlEditorProps> = ({
     return (
         <div className="flex-1 flex flex-col min-h-[150px] border-b border-terminal-border bg-terminal-bg relative group transition-all">
             {/* Toolbar */}
-            <div className="bg-terminal-surface/80 px-4 py-2 flex justify-between items-center border-b border-terminal-border backdrop-blur-md z-10">
-                <div className="flex items-center gap-4">
-                    <span className="text-xs uppercase text-terminal-text font-bold tracking-widest flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-terminal-blue animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]"></span>
-                        QUERY CONSOLE
+            <div className="bg-terminal-surface/80 px-2 sm:px-4 py-2 flex flex-wrap justify-between items-center border-b border-terminal-border backdrop-blur-md z-10 gap-2">
+                <div className="flex items-center gap-2 sm:gap-4">
+                    <span className="text-[10px] sm:text-xs uppercase text-terminal-text font-bold tracking-widest flex items-center gap-1 sm:gap-2">
+                        <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-terminal-blue animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]"></span>
+                        <span className="hidden xs:inline">QUERY CONSOLE</span>
+                        <span className="xs:hidden">QUERY</span>
                     </span>
-                    <span className="text-[10px] text-terminal-text/40 font-mono hidden sm:inline-block">
+                    <span className="text-[9px] sm:text-[10px] text-terminal-text/40 font-mono hidden md:inline-block">
                         INTELLISENSE ACTIVE
                     </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                     <button 
                         onClick={() => onChange('')}
-                        className="p-1.5 text-terminal-text/40 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                        className="p-1.5 text-terminal-text/40 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors active:scale-95"
                         title="Clear Editor"
                     >
                         <IconTrash className="w-3.5 h-3.5" />
                     </button>
-                    <div className="h-4 w-px bg-terminal-border mx-1"></div>
+                    <div className="h-4 w-px bg-terminal-border mx-0.5 sm:mx-1"></div>
                     <button 
                         onClick={onShowHistory}
-                        className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-terminal-text/60 hover:text-terminal-text hover:bg-terminal-surface rounded transition-colors"
+                        className="px-2 sm:px-3 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-terminal-text/60 hover:text-terminal-text hover:bg-terminal-surface rounded transition-colors active:scale-95"
                     >
                         HISTORY
                     </button>
                     <button 
                         onClick={onFormat}
-                        className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-terminal-text/60 hover:text-terminal-text hover:bg-terminal-surface rounded transition-colors"
+                        className="px-2 sm:px-3 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-terminal-text/60 hover:text-terminal-text hover:bg-terminal-surface rounded transition-colors active:scale-95"
                     >
                         FORMAT
                     </button>
-                    <span className="w-px h-4 bg-terminal-border mx-1"></span>
+                    <span className="w-px h-4 bg-terminal-border mx-0.5 sm:mx-1"></span>
                     <button 
                         onClick={() => onRun(sqlCode)}
                         disabled={isRunning}
                         className={`
-                            flex items-center gap-2 px-4 py-1.5 bg-terminal-green text-white border border-terminal-green
-                            font-bold font-mono text-xs rounded hover:bg-terminal-green/90 transition-all shadow-[0_0_10px_rgba(46,160,67,0.3)]
-                            ${isRunning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}
+                            flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-terminal-green text-white border border-terminal-green
+                            font-bold font-mono text-[10px] sm:text-xs rounded hover:bg-terminal-green/90 transition-all shadow-[0_0_10px_rgba(46,160,67,0.3)]
+                            ${isRunning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
                         `}
                     >
                         <IconPlay className="w-3 h-3" />
-                        {isRunning ? 'RUNNING...' : 'RUN QUERY'}
+                        <span className="hidden xs:inline">{isRunning ? 'RUNNING...' : 'RUN QUERY'}</span>
+                        <span className="xs:hidden">{isRunning ? 'RUN...' : 'RUN'}</span>
                     </button>
                 </div>
             </div>
@@ -296,7 +298,7 @@ const SqlEditor: React.FC<SqlEditorProps> = ({
                     className={`
                         w-full sm:w-auto px-6 py-2 bg-terminal-blue text-white border border-terminal-blue 
                         font-bold font-mono text-sm rounded shadow-lg hover:bg-terminal-blue/90 transition-all
-                        flex items-center justify-center gap-2
+                        flex items-center justify-center gap-2 active:scale-95
                         ${(isChecking || !answerInput.trim()) ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:scale-105 hover:shadow-blue-500/20'}
                     `}
                 >

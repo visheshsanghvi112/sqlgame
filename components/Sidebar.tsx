@@ -188,8 +188,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     return (
         <div 
             className={`
-                fixed md:relative h-full bg-terminal-surface/95 dark:bg-terminal-bg/95 backdrop-blur-md border-r border-terminal-border flex flex-col transition-all duration-300 ease-in-out z-50 shadow-xl
-                ${isCollapsed ? '-translate-x-full md:translate-x-0 md:w-16 w-64' : 'translate-x-0 w-72'}
+                fixed lg:relative h-full bg-terminal-surface/95 dark:bg-terminal-bg/95 backdrop-blur-md border-r border-terminal-border flex flex-col transition-all duration-300 ease-in-out z-50 shadow-xl
+                ${isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16 w-64' : 'translate-x-0 w-[85%] sm:w-80'}
             `}
         >
             {/* 1. Header & Logo */}
@@ -205,7 +205,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     onClick={toggleSidebar}
                     className="p-1.5 rounded-md text-terminal-text/60 hover:bg-terminal-surface hover:text-terminal-text transition-colors"
                 >
-                    {isCollapsed ? <IconChevronRight className="w-5 h-5" /> : <IconChevronLeft className="w-4 h-4" />}
+                    {isCollapsed ? <IconChevronRight className="w-5 h-5 lg:block hidden" /> : <IconChevronLeft className="w-4 h-4" />}
+                    {isCollapsed && <IconChevronRight className="w-5 h-5 lg:hidden block" />}
                 </button>
             </div>
 
@@ -234,7 +235,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 key={level}
                                 onClick={() => setDifficultyFilter(level)}
                                 className={`
-                                    flex-1 py-1 text-[9px] uppercase font-bold rounded transition-all text-center
+                                    flex-1 py-1 text-[9px] uppercase font-bold rounded transition-all text-center active:scale-95
                                     ${difficultyFilter === level
                                         ? 'bg-terminal-bg text-terminal-text shadow-sm border border-terminal-border/20'
                                         : 'text-terminal-text/40 hover:text-terminal-text hover:bg-terminal-bg/50'

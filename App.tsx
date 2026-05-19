@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import SqlEditor from './components/SqlEditor';
 import ResultsTable from './components/ResultsTable';
-import ChatAssistant from './components/ChatAssistant';
 import SettingsModal from './components/SettingsModal';
 import SchemaModal from './components/SchemaModal';
 import HistoryModal from './components/HistoryModal';
@@ -57,6 +56,7 @@ function App() {
   const [isSchemaOpen, setIsSchemaOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
+  const [isBriefingExpanded, setIsBriefingExpanded] = useState(false);
 
   // Hint State
   const [hasUsedHint, setHasUsedHint] = useState(false);
@@ -268,55 +268,55 @@ function App() {
     const isGameFullyComplete = isLastCase && completedCases.includes(currentCase.id);
 
     return (
-        <div className="h-screen w-screen bg-terminal-bg flex flex-col items-center justify-center font-mono text-center p-8 space-y-6 animate-in fade-in duration-500 relative overflow-hidden text-terminal-text">
+        <div className="h-full sm:h-screen w-screen bg-terminal-bg flex flex-col items-center justify-center font-mono text-center p-4 sm:p-8 space-y-6 animate-in fade-in duration-500 relative overflow-hidden text-terminal-text">
              {/* Background Grid */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-terminal-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-terminal-border)_1px,transparent_1px)] bg-[size:24px_24px] opacity-10"></div>
             
-            <div className="z-10 w-full max-w-3xl">
+            <div className="z-10 w-full max-w-3xl overflow-y-auto">
                 {isGameFullyComplete ? (
-                     <div className="space-y-6">
-                        <div className="inline-block p-4 rounded-full bg-yellow-500/10 border border-yellow-500/50 mb-4 animate-bounce">
-                             <span className="text-4xl">🏆</span>
+                     <div className="space-y-4 sm:space-y-6 py-8">
+                        <div className="inline-block p-4 rounded-full bg-yellow-500/10 border border-yellow-500/50 mb-2 sm:mb-4 animate-bounce">
+                             <span className="text-3xl sm:text-4xl">🏆</span>
                         </div>
-                        <h1 className="text-6xl font-bold text-yellow-500 mb-4 tracking-tighter">
+                        <h1 className="text-3xl sm:text-6xl font-bold text-yellow-500 mb-2 sm:mb-4 tracking-tighter">
                             MISSION ACCOMPLISHED
                         </h1>
-                        <div className="text-terminal-text text-xl border border-yellow-500/20 p-8 rounded-xl bg-gradient-to-br from-yellow-900/10 to-transparent backdrop-blur-sm">
+                        <div className="text-terminal-text text-base sm:text-xl border border-yellow-500/20 p-4 sm:p-8 rounded-xl bg-gradient-to-br from-yellow-900/10 to-transparent backdrop-blur-sm">
                             <p className="font-bold mb-2">ALL INVESTIGATIONS CLOSED.</p>
-                            <span className="text-sm opacity-70 block">Congratulations, {officerName}. Your record has been permanently added to the hall of fame.</span>
+                            <span className="text-xs sm:text-sm opacity-70 block">Congratulations, {officerName}. Your record has been permanently added to the hall of fame.</span>
                         </div>
                         <button 
                             onClick={confirmReset}
-                            className="px-8 py-3 mt-8 text-terminal-text hover:text-terminal-text border border-terminal-border rounded-lg hover:bg-terminal-surface transition-all"
+                            className="px-6 sm:px-8 py-2 sm:py-3 mt-4 sm:mt-8 text-xs sm:text-sm text-terminal-text hover:text-terminal-text border border-terminal-border rounded-lg hover:bg-terminal-surface transition-all"
                         >
                             Reset Career (Clear Data)
                         </button>
                      </div>
                 ) : (
-                    <>
-                        <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-terminal-green to-emerald-800 mb-6 tracking-tight">
+                    <div className="space-y-4 sm:space-y-8 py-8">
+                        <h1 className="text-2xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-terminal-green to-emerald-800 mb-4 sm:mb-6 tracking-tight">
                             {currentCase.id.startsWith('academy') ? 'MODULE COMPLETE' : 'CASE CLOSED'}
                         </h1>
                         
-                        <div className="bg-terminal-surface/90 backdrop-blur-xl p-8 rounded-2xl border border-terminal-green/20 shadow-[0_0_30px_rgba(46,160,67,0.1)] w-full">
-                            <div className="text-xs text-terminal-text opacity-50 mb-4 uppercase tracking-[0.2em] font-bold">Chief's Report</div>
-                            <p className="text-lg text-terminal-text whitespace-pre-wrap leading-relaxed">
+                        <div className="bg-terminal-surface/90 backdrop-blur-xl p-4 sm:p-8 rounded-2xl border border-terminal-green/20 shadow-[0_0_30px_rgba(46,160,67,0.1)] w-full">
+                            <div className="text-[10px] text-terminal-text opacity-50 mb-2 sm:mb-4 uppercase tracking-[0.2em] font-bold">Chief's Report</div>
+                            <p className="text-sm sm:text-lg text-terminal-text whitespace-pre-wrap leading-relaxed">
                                 {feedback || `Excellent work, ${officerName}. Your query logic was sound and the suspect has been apprehended.`}
                             </p>
                         </div>
 
-                        <div className="flex justify-center gap-4 mt-10">
+                        <div className="flex justify-center gap-4 mt-6 sm:mt-10">
                             <button 
                                 onClick={advanceToNextLevel}
-                                className="group relative px-8 py-4 bg-terminal-text text-terminal-bg font-bold text-lg rounded-full hover:scale-105 transition-all shadow-[0_0_20px_rgba(100,100,100,0.3)] overflow-hidden"
+                                className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-terminal-text text-terminal-bg font-bold text-sm sm:text-lg rounded-full hover:scale-105 transition-all shadow-[0_0_20px_rgba(100,100,100,0.3)] overflow-hidden w-full sm:w-auto"
                             >
-                                <span className="relative z-10 flex items-center gap-2">
+                                <span className="relative z-10 flex items-center justify-center gap-2">
                                     {isLastCase ? 'CLOSE FILE' : 'NEXT ASSIGNMENT'} 
                                     <span className="group-hover:translate-x-1 transition-transform">→</span>
                                 </span>
                             </button>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </div>
@@ -367,17 +367,25 @@ function App() {
         toggleTheme={toggleTheme}
       />
       
-      <div className="flex-1 flex flex-col min-w-0 relative">
+      {/* Mobile Sidebar Backdrop */}
+      {!isSidebarCollapsed && (
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-300" 
+            onClick={() => setIsSidebarCollapsed(true)}
+          />
+      )}
+      
+      <div className="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
         {/* Subtle Background Grid for the Workspace */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-terminal-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-terminal-border)_1px,transparent_1px)] bg-[size:32px_32px] opacity-40 dark:opacity-[0.03] pointer-events-none"></div>
 
         {/* Header */}
-        <div className="p-6 border-b border-terminal-border bg-terminal-surface/80 dark:bg-terminal-bg/50 backdrop-blur-md z-10 transition-colors shadow-sm dark:shadow-none">
-            <div className="flex justify-between items-start">
-                <div className="flex-1 mr-4 flex items-start">
+        <div className="p-4 sm:p-6 border-b border-terminal-border bg-terminal-surface/80 dark:bg-terminal-bg/50 backdrop-blur-md z-10 transition-colors shadow-sm dark:shadow-none">
+            <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+                <div className="flex-1 w-full flex items-start">
                     <button 
                         onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                        className="md:hidden mr-4 mt-1 p-1 text-terminal-text/60 hover:text-terminal-text hover:bg-white/5 rounded transition-colors"
+                        className="lg:hidden mr-4 mt-1 p-1 text-terminal-text/60 hover:text-terminal-text hover:bg-white/5 rounded transition-colors"
                     >
                         <IconMenu className="w-6 h-6" />
                     </button>
@@ -394,14 +402,25 @@ function App() {
                             <span className="text-[10px] font-bold bg-terminal-green text-black px-2 py-0.5 rounded">SOLVED</span>
                         )}
                     </div>
-                    <h2 className="text-3xl font-bold text-terminal-text mb-4 tracking-tight">
-                        {currentCase.title}
-                    </h2>
-                    <div className="bg-terminal-surface/50 dark:bg-black/20 p-5 rounded-xl border border-terminal-border dark:border-white/10 shadow-inner max-h-[30vh] overflow-y-auto scrollbar-thin scrollbar-thumb-terminal-border dark:scrollbar-thumb-white/10 scrollbar-track-transparent">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl sm:text-3xl font-bold text-terminal-text tracking-tight truncate">
+                            {currentCase.title}
+                        </h2>
+                        <button 
+                            onClick={() => setIsBriefingExpanded(!isBriefingExpanded)}
+                            className="lg:hidden text-[10px] font-bold uppercase text-terminal-blue bg-terminal-blue/10 px-2 py-1 rounded"
+                        >
+                            {isBriefingExpanded ? 'COLLAPSE' : 'EXPAND'}
+                        </button>
+                    </div>
+                    <div className={`
+                        bg-terminal-surface/50 dark:bg-black/20 p-3 sm:p-5 rounded-xl border border-terminal-border dark:border-white/10 shadow-inner overflow-y-auto scrollbar-thin scrollbar-thumb-terminal-border dark:scrollbar-thumb-white/10 scrollbar-track-transparent transition-all duration-300
+                        ${isBriefingExpanded ? 'max-h-[60vh]' : 'max-h-[15vh] sm:max-h-[30vh]'}
+                    `}>
                         {currentCase.briefing.split(/(\*\*.*?\*\*)/g).map((part, i) => {
                             if (part.startsWith('**') && part.endsWith('**')) {
                                 return (
-                                    <h3 key={i} className="text-terminal-blue text-xs font-bold uppercase tracking-widest mt-4 first:mt-0 mb-2 border-b border-terminal-blue/20 pb-1 sticky top-0 bg-terminal-bg/95 dark:bg-black/90 backdrop-blur-sm py-1 z-10">
+                                    <h3 key={i} className="text-terminal-blue text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-4 first:mt-0 mb-2 border-b border-terminal-blue/20 pb-1 sticky top-0 bg-terminal-bg/95 dark:bg-black/90 backdrop-blur-sm py-1 z-10">
                                         {part.slice(2, -2)}
                                     </h3>
                                 );
@@ -411,7 +430,7 @@ function App() {
                             // Detect Schema/ASCII tables (must have border characters)
                             if (part.includes('+---') && part.includes('|')) {
                                 return (
-                                    <div key={i} className="font-mono text-xs leading-normal text-terminal-text/80 bg-terminal-surface dark:bg-black/40 p-3 rounded border border-terminal-border dark:border-white/5 overflow-x-auto whitespace-pre mb-3 shadow-sm">
+                                    <div key={i} className="font-mono text-[10px] sm:text-xs leading-normal text-terminal-text/80 bg-terminal-surface dark:bg-black/40 p-2 sm:p-3 rounded border border-terminal-border dark:border-white/5 overflow-x-auto whitespace-pre mb-3 shadow-sm">
                                         {part.trim()}
                                     </div>
                                 );
@@ -419,7 +438,7 @@ function App() {
                             
                             // Regular text
                             return (
-                                <p key={i} className="text-terminal-text/90 text-sm leading-relaxed mb-3 whitespace-pre-wrap font-sans">
+                                <p key={i} className="text-terminal-text/90 text-xs sm:text-sm leading-relaxed mb-3 whitespace-pre-wrap font-sans">
                                     {part.trim()}
                                 </p>
                             );
@@ -428,53 +447,65 @@ function App() {
                     </div>
                 </div>
                 
-                <div className="flex flex-col items-end gap-2 shrink-0">
-                    <div className="flex gap-2">
+                <div className="flex flex-row flex-wrap lg:flex-col items-end gap-2 shrink-0 w-full lg:w-auto">
+                    <div className="flex gap-2 w-full lg:w-auto justify-end sm:justify-start">
                         <button 
                             onClick={() => setIsNotebookOpen(!isNotebookOpen)}
                             className={`
-                                px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider border transition-all flex items-center gap-2
+                                flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider border transition-all flex items-center justify-center gap-2 active:scale-95
                                 ${isNotebookOpen 
                                     ? 'bg-terminal-blue text-white border-terminal-blue shadow-lg shadow-terminal-blue/20' 
                                     : 'bg-terminal-surface border-terminal-border text-terminal-text/80 hover:text-terminal-text hover:bg-terminal-surface/80'}
                             `}
                         >
                             <IconEdit className="w-3 h-3" />
-                            NOTEBOOK
+                            <span className="hidden xs:inline">NOTEBOOK</span>
+                            <span className="xs:hidden">NOTES</span>
                         </button>
                         <button 
                             onClick={() => setIsSchemaOpen(true)}
-                            className="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-terminal-surface border border-terminal-border hover:bg-white/5 transition-all text-terminal-text/80 hover:text-terminal-text"
+                            className="flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-terminal-surface border border-terminal-border hover:bg-white/5 transition-all text-terminal-text/80 hover:text-terminal-text active:scale-95"
                         >
-                            DATABASE
+                            <span className="hidden xs:inline">DATABASE</span>
+                            <span className="xs:hidden">DB</span>
                         </button>
                         <button 
                             onClick={requestHint}
                             disabled={hasUsedHint || completedCases.includes(currentCase.id)}
                             className={`
-                                group relative px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all
+                                flex-1 sm:flex-initial group relative px-3 sm:px-4 py-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all
                                 ${hasUsedHint || completedCases.includes(currentCase.id)
                                     ? 'bg-transparent text-gray-500 border border-terminal-border cursor-default' 
-                                    : 'bg-terminal-blue/10 text-terminal-blue border border-terminal-blue/30 hover:bg-terminal-blue/20'}
+                                    : 'bg-terminal-blue/10 text-terminal-blue border border-terminal-blue/30 hover:bg-terminal-blue/20 active:scale-95'}
                             `}
                         >
-                            {hasUsedHint ? 'HINT RECEIVED' : 'REQUEST HINT'}
+                            {hasUsedHint ? (
+                                <>
+                                    <span className="hidden xs:inline">HINT RECEIVED</span>
+                                    <span className="xs:hidden">HINTED</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="hidden xs:inline">REQUEST HINT</span>
+                                    <span className="xs:hidden">HINT</span>
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>
             </div>
             
             {activeHint && (
-                <div className="mt-4 p-4 rounded-lg bg-yellow-500/5 border border-yellow-500/20 text-yellow-500 text-sm animate-in slide-in-from-top-2 flex gap-3">
-                    <span className="font-bold">💡 HINT:</span> 
-                    {activeHint}
+                <div className="mt-2 sm:mt-4 p-3 sm:p-4 rounded-lg bg-yellow-500/5 border border-yellow-500/20 text-yellow-500 text-xs sm:text-sm animate-in slide-in-from-top-2 flex gap-3">
+                    <span className="font-bold shrink-0">💡 HINT:</span> 
+                    <div className="flex-1">{activeHint}</div>
                 </div>
             )}
 
             {gameState === 'FAILED' && (
-                <div className="mt-4 p-4 rounded-lg bg-red-500/5 border border-red-500/20 text-red-500 text-sm animate-in shake flex gap-3">
-                    <span className="font-bold">⛔ ERROR:</span> 
-                    {feedback}
+                <div className="mt-2 sm:mt-4 p-3 sm:p-4 rounded-lg bg-red-500/5 border border-red-500/20 text-red-500 text-xs sm:text-sm animate-in shake flex gap-3">
+                    <span className="font-bold shrink-0">⛔ ERROR:</span> 
+                    <div className="flex-1">{feedback}</div>
                 </div>
             )}
         </div>
@@ -497,17 +528,6 @@ function App() {
             <ResultsTable result={queryResult} theme={theme} />
         </div>
       </div>
-
-      {/* Chat is fixed width on the right, could be collapsible too in future iterations */}
-      <ChatAssistant 
-        currentCase={currentCase}
-        queryHistory={queryHistory}
-        onCaseSolved={() => {
-            if (!completedCases.includes(currentCase.id)) {
-                 setGameState('SOLVED_ANIMATION');
-            }
-        }}
-      />
     </div>
   );
 }

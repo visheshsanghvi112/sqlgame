@@ -90,6 +90,9 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({ result, theme }) => {
     const tooltipText = isDark ? '#f3f4f6' : '#1f2937';
 
     const renderChart = () => {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+        const fontSize = isMobile ? 10 : 12;
+
         switch (chartType) {
             case 'line':
                 return (
@@ -98,22 +101,23 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({ result, theme }) => {
                         <XAxis 
                             dataKey={xAxisKey} 
                             stroke={axisColor} 
-                            fontSize={12} 
+                            fontSize={fontSize} 
                             tickLine={false} 
-                            axisLine={false} 
+                            axisLine={false}
+                            minTickGap={20}
                         />
                         <YAxis 
                             stroke={axisColor} 
-                            fontSize={12} 
+                            fontSize={fontSize} 
                             tickLine={false} 
                             axisLine={false} 
                             tickFormatter={(value) => `${value}`} 
                         />
                         <Tooltip 
-                            contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText }}
+                            contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontSize: '12px' }}
                             itemStyle={{ color: tooltipText }}
                         />
-                        <Legend />
+                        <Legend wrapperStyle={{ fontSize: '10px' }} />
                         <Line 
                             type="monotone" 
                             dataKey={yAxisKey} 
@@ -132,8 +136,8 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({ result, theme }) => {
                             cx="50%"
                             cy="50%"
                             labelLine={false}
-                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                            outerRadius={80}
+                            label={({ name, percent }) => isMobile ? '' : `${name} ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={isMobile ? 60 : 80}
                             fill="#8884d8"
                             dataKey={yAxisKey}
                             nameKey={xAxisKey}
@@ -143,10 +147,10 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({ result, theme }) => {
                             ))}
                         </Pie>
                         <Tooltip 
-                            contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText }}
+                            contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontSize: '12px' }}
                             itemStyle={{ color: tooltipText }}
                         />
-                        <Legend />
+                        <Legend wrapperStyle={{ fontSize: '10px' }} />
                     </PieChart>
                 );
             case 'bar':
@@ -157,23 +161,24 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({ result, theme }) => {
                         <XAxis 
                             dataKey={xAxisKey} 
                             stroke={axisColor} 
-                            fontSize={12} 
+                            fontSize={fontSize} 
                             tickLine={false} 
-                            axisLine={false} 
+                            axisLine={false}
+                            minTickGap={20}
                         />
                         <YAxis 
                             stroke={axisColor} 
-                            fontSize={12} 
+                            fontSize={fontSize} 
                             tickLine={false} 
                             axisLine={false} 
                             tickFormatter={(value) => `${value}`} 
                         />
                         <Tooltip 
                             cursor={{ fill: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
-                            contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText }}
+                            contentStyle={{ backgroundColor: tooltipBg, borderColor: tooltipBorder, color: tooltipText, fontSize: '12px' }}
                             itemStyle={{ color: tooltipText }}
                         />
-                        <Legend />
+                        <Legend wrapperStyle={{ fontSize: '10px' }} />
                         <Bar dataKey={yAxisKey} fill="#8884d8" radius={[4, 4, 0, 0]} />
                     </BarChart>
                 );
@@ -181,21 +186,23 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({ result, theme }) => {
     };
 
     return (
-        <div className="w-full h-[300px] p-4 bg-terminal-surface/30 rounded-lg border border-terminal-border/50">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-terminal-text/70 flex items-center gap-2">
-                    {chartType === 'line' && <IconChartLine className="w-4 h-4" />}
-                    {chartType === 'pie' && <IconChartPie className="w-4 h-4" />}
-                    {chartType === 'bar' && <IconChartBar className="w-4 h-4" />}
-                    Data Visualization
+        <div className="w-full h-[250px] sm:h-[300px] p-2 sm:p-4 bg-terminal-surface/30 rounded-lg border border-terminal-border/50">
+            <div className="flex items-center justify-between mb-2 sm:mb-4">
+                <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-terminal-text/70 flex items-center gap-2">
+                    {chartType === 'line' && <IconChartLine className="w-3 h-3 sm:w-4 h-4" />}
+                    {chartType === 'pie' && <IconChartPie className="w-3 h-3 sm:w-4 h-4" />}
+                    {chartType === 'bar' && <IconChartBar className="w-3 h-3 sm:w-4 h-4" />}
+                    <span className="truncate">Visualizer</span>
                 </h3>
-                <div className="text-[10px] font-mono text-terminal-text/40">
-                    {xAxisKey} vs {yAxisKey}
+                <div className="text-[9px] sm:text-[10px] font-mono text-terminal-text/40 truncate ml-2">
+                    {xAxisKey} / {yAxisKey}
                 </div>
             </div>
-            <ResponsiveContainer width="100%" height="100%">
-                {renderChart()}
-            </ResponsiveContainer>
+            <div className="h-[180px] sm:h-[220px]">
+                <ResponsiveContainer width="100%" height="100%">
+                    {renderChart()}
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 };
