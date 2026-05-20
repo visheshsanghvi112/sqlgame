@@ -25,7 +25,7 @@ interface TableDef {
 const SCHEMA_DEFINITIONS: TableDef[] = [
     {
         tableName: 'crime_scene_report',
-        description: 'Initial reports of crimes',
+        description: 'Classified incident reports. Start your investigation here.',
         columns: [
             { name: 'date', type: 'INT' },
             { name: 'type', type: 'VARCHAR' },
@@ -35,7 +35,7 @@ const SCHEMA_DEFINITIONS: TableDef[] = [
     },
     {
         tableName: 'drivers_license',
-        description: 'DMV records for drivers',
+        description: 'DMV records for vehicle operators. Links to physical descriptions.',
         columns: [
             { name: 'id', type: 'INT', isPrimaryKey: true },
             { name: 'age', type: 'INT' },
@@ -50,7 +50,7 @@ const SCHEMA_DEFINITIONS: TableDef[] = [
     },
     {
         tableName: 'person',
-        description: 'Central registry of all citizens',
+        description: 'Federal Citizen Registry. The hub for all identity tracking.',
         columns: [
             { name: 'id', type: 'INT', isPrimaryKey: true },
             { name: 'name', type: 'VARCHAR' },
@@ -62,7 +62,7 @@ const SCHEMA_DEFINITIONS: TableDef[] = [
     },
     {
         tableName: 'income',
-        description: 'Financial records linked by SSN',
+        description: 'Financial surveillance data. Follow the money.',
         columns: [
             { name: 'ssn', type: 'VARCHAR', isPrimaryKey: true },
             { name: 'annual_income', type: 'INT' },
@@ -70,7 +70,7 @@ const SCHEMA_DEFINITIONS: TableDef[] = [
     },
     {
         tableName: 'interview',
-        description: 'Transcripts of witness interviews',
+        description: 'Witness transcripts. Often contains critical logic clues.',
         columns: [
             { name: 'person_id', type: 'INT', foreignKey: { table: 'person', column: 'id' } },
             { name: 'transcript', type: 'VARCHAR' },
@@ -78,7 +78,7 @@ const SCHEMA_DEFINITIONS: TableDef[] = [
     },
     {
         tableName: 'facebook_event_checkin',
-        description: 'Social media event attendance',
+        description: 'Digital footprint and social verification data.',
         columns: [
             { name: 'person_id', type: 'INT', foreignKey: { table: 'person', column: 'id' } },
             { name: 'event_id', type: 'INT' },
@@ -88,7 +88,7 @@ const SCHEMA_DEFINITIONS: TableDef[] = [
     },
     {
         tableName: 'get_fit_now_member',
-        description: 'Gym membership roster',
+        description: 'Gym attendance logs. Tracks physical presence at specific times.',
         columns: [
             { name: 'id', type: 'VARCHAR', isPrimaryKey: true },
             { name: 'person_id', type: 'INT', foreignKey: { table: 'person', column: 'id' } },
@@ -160,7 +160,7 @@ const SchemaModal: React.FC<SchemaModalProps> = ({ isOpen, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 dark:bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200 transition-colors">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/20 dark:bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200 transition-colors">
             <div className="bg-terminal-bg border border-terminal-border rounded-xl w-full max-w-6xl max-h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 sm:p-6 border-b border-terminal-border bg-terminal-surface/50 shrink-0">
@@ -169,8 +169,8 @@ const SchemaModal: React.FC<SchemaModalProps> = ({ isOpen, onClose }) => {
                             <Database className="w-5 h-5 text-terminal-blue" />
                         </div>
                         <div>
-                            <h2 className="text-lg sm:text-xl font-bold text-terminal-text tracking-tight">Database Schema</h2>
-                            <p className="text-[10px] text-terminal-text/60 uppercase tracking-wider">Entity Relationship Diagram</p>
+                            <h2 className="text-lg sm:text-xl font-bold text-terminal-text tracking-tight tracking-widest uppercase">Intelligence Archive</h2>
+                            <p className="text-[10px] text-terminal-text/60 uppercase tracking-wider">Level 4 Clearance Required</p>
                         </div>
                     </div>
                     <button 

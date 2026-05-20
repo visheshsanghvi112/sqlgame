@@ -15,10 +15,10 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ result, theme }) => {
         return (
             <div className="flex-1 flex flex-col items-center justify-center text-terminal-text/30 font-mono bg-terminal-bg transition-colors p-8 border-t border-terminal-border/50 min-h-[200px]">
                 <div className="p-6 rounded-full bg-terminal-surface/50 mb-4 animate-pulse">
-                    <IconDatabase className="w-8 h-8 opacity-40" />
+                    <IconDatabase className="w-8 h-8 opacity-40 text-terminal-blue" />
                 </div>
-                <p className="text-sm tracking-[0.2em] uppercase font-bold opacity-60">Ready for Query</p>
-                <p className="text-xs mt-2 opacity-40">Results will appear here...</p>
+                <p className="text-sm tracking-[0.2em] uppercase font-bold opacity-60">Awaiting Forensic Input</p>
+                <p className="text-xs mt-2 opacity-40">Initialize query to verify evidence...</p>
             </div>
         );
     }
@@ -28,12 +28,13 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ result, theme }) => {
             <div className="flex-1 p-6 font-mono bg-terminal-bg transition-colors overflow-auto border-t border-terminal-border/50 min-h-[200px]">
                 <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-6 max-w-3xl mx-auto shadow-[0_0_20px_rgba(239,68,68,0.1)]">
                     <div className="text-red-500 font-bold mb-3 flex items-center gap-3 text-lg">
-                        <span className="text-2xl">⛔</span> 
-                        <span>SYNTAX ERROR</span>
+                        <span className="text-2xl">⚠️</span> 
+                        <span>SYSTEM SECURITY BREACH: INVALID SYNTAX</span>
                     </div>
                     <div className="text-red-400/90 text-sm whitespace-pre-wrap font-mono bg-terminal-surface dark:bg-black/30 p-4 rounded border border-red-500/10">
                         {result.error}
                     </div>
+                    <p className="mt-4 text-[10px] text-red-500/50 uppercase tracking-widest font-bold">Error reported by SQL Kernel. Check command formatting.</p>
                 </div>
             </div>
         );
@@ -42,18 +43,20 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ result, theme }) => {
     if (result.data.length === 0 && result.columns.length === 0) {
         return (
              <div className="flex-1 p-6 font-mono bg-terminal-bg transition-colors flex flex-col items-center justify-center border-t border-terminal-border/50 min-h-[200px]">
-                <div className="text-terminal-green font-bold text-xl mb-2 flex items-center gap-2">
+                <div className="text-terminal-green font-bold text-xl mb-2 flex items-center gap-2 uppercase tracking-tighter">
                     <span className="w-2 h-2 rounded-full bg-terminal-green animate-pulse"></span>
-                    EXECUTION SUCCESSFUL
+                    Verified Evidence Uploaded
                 </div>
-                <div className="text-terminal-text/60 text-sm">No rows returned by this query.</div>
-                <div className="text-xs opacity-30 mt-4 font-mono">Time: {result.executionTime?.toFixed(2)}ms</div>
+                <div className="text-terminal-text/60 text-sm border border-terminal-green/20 px-4 py-2 rounded bg-terminal-green/5">
+                    Command executed successfully. No matching records found in the archive.
+                </div>
+                <div className="text-[10px] opacity-30 mt-4 font-mono uppercase tracking-[0.3em]">Processing Time: {result.executionTime?.toFixed(2)}ms</div>
             </div>
         );
     }
 
     return (
-        <div className="flex-[0.9] overflow-hidden bg-terminal-bg flex flex-col transition-colors relative border-t border-terminal-border/50 min-h-[200px]">
+        <div className="h-full overflow-hidden bg-terminal-bg flex flex-col transition-colors relative border-t border-terminal-border/50 min-h-[200px]">
             {/* Grid Header */}
             <div className="px-2 sm:px-4 py-2 bg-terminal-surface/80 dark:bg-terminal-surface/80 backdrop-blur-sm border-b border-terminal-border flex justify-between items-center sticky top-0 z-20 shrink-0 gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">

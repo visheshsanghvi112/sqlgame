@@ -104,12 +104,12 @@ Table: \`person\`
 +---------------------+---------+
 
 **Goal**
-Execute the query to retrieve all people.
+Execute the query and identify the name of the first person in the database.
         `,
-        objective: 'Execute the query to retrieve all people.',
-        expectedAnswer: '1', // Any valid person ID
-        solutionQuery: `SELECT * FROM person`,
-        hint: 'Use the query: SELECT * FROM person. It retrieves all rows and columns from the person table.'
+        objective: 'What is the name of the first person?',
+        expectedAnswer: 'James Smith',
+        solutionQuery: `SELECT * FROM person LIMIT 1`,
+        hint: 'Use the query: SELECT * FROM person LIMIT 1. Look for the "name" column.'
     },
     {
         id: 'academy_02',
@@ -118,7 +118,7 @@ Execute the query to retrieve all people.
         difficulty: 'Easy',
         briefing: `
 **Problem**
-Efficient detectives don't clutter their screens. Sometimes you only need a suspect's name and SSN, not their whole life story. We are still looking at the \`person\` table. Instead of *, specify the columns: \`name\` and \`ssn\`.
+Efficient detectives don't clutter their screens. Sometimes you only need a suspect's SSN. We are still looking at the \`person\` table. Instead of *, specify the columns: \`name\` and \`ssn\`.
 
 **Schema**
 Table: \`person\`
@@ -134,12 +134,12 @@ Table: \`person\`
 +---------------------+---------+
 
 **Goal**
-Get a list of just Names and SSNs.
+What is the SSN of James Smith?
         `,
-        objective: 'Get a list of just Names and SSNs.',
-        expectedAnswer: 'James Smith', // Matches first person (random seed)
-        solutionQuery: `SELECT name, ssn FROM person`,
-        hint: 'Replace the asterisk (*) with the specific column names "name" and "ssn" separated by a comma.'
+        objective: 'Find the SSN of James Smith.',
+        expectedAnswer: '000-00-1000',
+        solutionQuery: `SELECT name, ssn FROM person WHERE name = 'James Smith'`,
+        hint: 'Try "SELECT name, ssn FROM person WHERE name = \'James Smith\'".'
     },
     {
         id: 'academy_03',
@@ -730,10 +730,10 @@ Table: \`drivers_license\`
 **Goal**
 Count drivers per age group.
         `,
-        objective: 'Count drivers per age group.',
-        expectedAnswer: 'Young: 10, Middle: 20, Senior: 5',
-        solutionQuery: `SELECT CASE WHEN age < 30 THEN 'Young' WHEN age BETWEEN 30 AND 60 THEN 'Middle' ELSE 'Senior' END as age_group, COUNT(*) FROM drivers_license GROUP BY age_group`,
-        hint: 'Use CASE WHEN ... THEN ... END inside your SELECT, then GROUP BY that alias.'
+        objective: 'Count drivers per age group (How many Young drivers?)',
+        expectedAnswer: '10',
+        solutionQuery: `SELECT COUNT(*) FROM drivers_license WHERE age < 30`,
+        hint: 'You can use standard counts: SELECT COUNT(*) FROM drivers_license WHERE age < 30.'
     },
     {
         id: 'interview_10',
@@ -743,7 +743,7 @@ Count drivers per age group.
         briefing: `
 **Problem**
 We need to identify potential co-habitants (roommates or family members). Find pairs of different people who share the exact same address (street name and number).
-Return the two names as separate columns. Ensure each pair is listed only once (avoid duplicates like A-B and B-A).
+Return the name of the household (e.g., who lives with Morty Schapiro?).
 
 **Schema**
 Table: \`person\`
@@ -758,20 +758,13 @@ Table: \`person\`
 | ssn                 | VARCHAR |
 +---------------------+---------+
 
-**Example Output**
-+----------------+--------------+
-| name           | name         |
-+----------------+--------------+
-| Morty Schapiro | Summer Smith |
-+----------------+--------------+
-
 **Goal**
-List pairs of people living at the same address.
+What is the name of the person who lives at the same address as Morty Schapiro?
         `,
-        objective: 'List pairs of roommates/family.',
-        expectedAnswer: 'Morty Schapiro | Summer Smith',
-        solutionQuery: `SELECT p1.name, p2.name FROM person p1 JOIN person p2 ON p1.address_street_name = p2.address_street_name AND p1.address_number = p2.address_number WHERE p1.id < p2.id`,
-        hint: 'Join the person table to itself (p1 JOIN person p2) on address fields. Ensure p1.id < p2.id to avoid duplicates.'
+        objective: 'Who lives with Morty Schapiro?',
+        expectedAnswer: 'Summer Smith',
+        solutionQuery: `SELECT p2.name FROM person p1 JOIN person p2 ON p1.address_street_name = p2.address_street_name AND p1.address_number = p2.address_number WHERE p1.name = 'Morty Schapiro' AND p2.name != 'Morty Schapiro'`,
+        hint: 'Join the person table to itself (p1 JOIN person p2) on address fields and filter by Morty Schapiro.'
     },
     {
         id: 'interview_11',
@@ -849,12 +842,12 @@ Table: \`facebook_event_checkin\`
 +----------+
 
 **Goal**
-List names of licensed people with zero event checkins.
+List the name of a licensed person with zero event checkins.
         `,
-        objective: 'List names of licensed people with zero event checkins.',
-        expectedAnswer: 'John Doe',
-        solutionQuery: `SELECT name FROM person WHERE id NOT IN (SELECT person_id FROM facebook_event_checkin)`,
-        hint: 'Use WHERE id NOT IN (SELECT person_id FROM ...)'
+        objective: 'List the name of a licensed person with zero event checkins.',
+        expectedAnswer: 'Unlucky Luke',
+        solutionQuery: `SELECT name FROM person WHERE id NOT IN (SELECT person_id FROM facebook_event_checkin) AND license_id IS NOT NULL`,
+        hint: 'Use WHERE id NOT IN (SELECT person_id FROM ...) AND license_id IS NOT NULL'
     },
     {
         id: 'interview_13',

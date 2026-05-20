@@ -46,7 +46,7 @@ const Notebook: React.FC<NotebookProps> = ({ isOpen, onClose, theme }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed right-0 top-16 lg:top-0 bottom-0 w-full sm:w-80 bg-terminal-surface dark:bg-terminal-surface border-l border-terminal-border shadow-2xl z-40 flex flex-col transition-transform duration-300 transform translate-x-0">
+        <div className="fixed right-0 top-16 lg:top-0 bottom-0 w-full sm:w-80 bg-terminal-surface dark:bg-terminal-bg border-l border-terminal-border shadow-2xl z-[80] flex flex-col transition-transform duration-300 transform translate-x-0">
             <div className="p-4 border-b border-terminal-border flex justify-between items-center bg-white/50 dark:bg-terminal-bg/50 backdrop-blur-sm">
                 <h2 className="text-sm font-bold uppercase tracking-widest text-terminal-text flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_8px_rgba(234,179,8,0.6)]"></span>

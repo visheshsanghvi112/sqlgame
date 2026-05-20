@@ -57,11 +57,42 @@ const generateGameData = () => {
     people.push({ id: 99999, name: 'Bruce Vayne', license_id: 99999, address_number: 1, address_street_name: 'Gotham Way', ssn: '000-00-0001' });
     incomes.push({ ssn: '000-00-0001', annual_income: 1000000000 }); // 1 Billion
 
+    // Academy: First person (James Smith)
+    people.push({ id: 100, name: 'James Smith', license_id: 200100, address_number: 1, address_street_name: 'Main St', ssn: '000-00-1000' });
+    licenses.push({ id: 200100, age: 30, height: 180, eye_color: 'brown', hair_color: 'black', gender: 'male', plate_number: 'JS-100', car_make: 'Toyota', car_model: 'Camry' });
+    incomes.push({ ssn: '000-00-1000', annual_income: 45000 });
+
     // Academy: Specific target for exact match 'Katy Perry'
     const katyLicense = 100001;
     licenses.push({ id: katyLicense, age: 34, height: 170, eye_color: 'blue', hair_color: 'black', gender: 'female', plate_number: 'ROAR', car_make: 'Audi', car_model: 'A4' });
     people.push({ id: 88888, name: 'Katy Perry', license_id: katyLicense, address_number: 10, address_street_name: 'Pop Star Ln', ssn: '123-45-6789' });
     incomes.push({ ssn: '123-45-6789', annual_income: 5000000 });
+
+    // Academy: No-license citizen (John Doe)
+    people.push({ id: 55555, name: 'John Doe', license_id: null, address_number: 404, address_street_name: 'Unknown Ave', ssn: '999-00-0000' });
+    incomes.push({ ssn: '999-00-0000', annual_income: 15000 });
+
+    // Academy: Roommate for Morty (Summer Smith)
+    people.push({ id: 2003, name: 'Summer Smith', license_id: 999003, address_number: 4919, address_street_name: 'Northwestern Dr', ssn: '111-22-4444' });
+    licenses.push({ id: 999003, age: 18, height: 160, eye_color: 'green', hair_color: 'orange', gender: 'female', plate_number: 'SUMM3R', car_make: 'Toyota', car_model: 'Corolla' });
+
+    // Interview 12: Licensed but no events (Unlucky Luke)
+    people.push({ id: 3001, name: 'Unlucky Luke', license_id: 300101, address_number: 13, address_street_name: 'Pine St', ssn: '111-00-5555' });
+    licenses.push({ id: 300101, age: 30, height: 180, eye_color: 'brown', hair_color: 'black', gender: 'male', plate_number: 'LUK-E', car_make: 'Ford', car_model: 'F-150' });
+
+    // Interview 19: Gym member but no check-ins (Lazy Larry)
+    people.push({ id: 4001, name: 'Lazy Larry', license_id: 400101, address_number: 99, address_street_name: 'Oak St', ssn: '111-00-6666' });
+    licenses.push({ id: 400101, age: 25, height: 175, eye_color: 'blue', hair_color: 'blonde', gender: 'male', plate_number: 'LAZY-1', car_make: 'Chevrolet', car_model: 'Malibu' });
+    gymMembers.push({ id: '99Z99', person_id: 4001, name: 'Lazy Larry', membership_start_date: 20170101, membership_status: 'regular' });
+
+    // Interview 18: Middle-upper class (Tesla Model S owner)
+    people.push({ id: 5001, name: 'Wealthy Wendy', license_id: 500101, address_number: 55, address_street_name: 'Maple Ave', ssn: '111-00-7777' });
+    licenses.push({ id: 500101, age: 45, height: 165, eye_color: 'green', hair_color: 'blonde', gender: 'female', plate_number: 'RICH-1', car_make: 'Tesla', car_model: 'Model S' });
+    incomes.push({ ssn: '111-00-7777', annual_income: 90000 });
+
+    // Cyber 01: Specific pattern plate (Sleeper Cell)
+    licenses.push({ id: 600101, age: 28, height: 180, eye_color: 'brown', hair_color: 'black', gender: 'male', plate_number: 'H42W9', car_make: 'BMW', car_model: 'X5' });
+    people.push({ id: 6001, name: 'Sleeper Agent One', license_id: 600101, address_number: 777, address_street_name: 'Sunset Blvd', ssn: '111-00-8888' });
 
     // --- 1. Noise Data (1000 people) ---
     // We use the seeded RNG so this is the SAME every reload.
@@ -205,6 +236,10 @@ const generateGameData = () => {
     people.push({ id: 6666, name: 'Jeremy Bowers', license_id: jeremyLicenseId, address_number: 12, address_street_name: 'Main St', ssn: '666-66-6666' });
     gymMembers.push({ id: '48Z55', person_id: 6666, name: 'Jeremy Bowers', membership_start_date: 20160101, membership_status: 'gold' });
     gymCheckins.push({ membership_id: '48Z55', check_in_date: 20180109, check_in_time: 1530, check_out_time: 1700 });
+    // Guarantee Interview 13: Peak hour 17 (5 PM)
+    for(let i=0; i<10; i++) {
+        gymCheckins.push({ membership_id: `99A${i}`, check_in_date: 20180109, check_in_time: 1700 + i, check_out_time: 1800 });
+    }
     // Jeremy interview for next step
     interviews.push({ person_id: 6666, transcript: 'I was hired by a woman with a lot of money. I don\'t know her name, but I know she\'s around 5\'5" (65") to 5\'7" (67"). She has red hair and she drives a Tesla Model S. I know that she attended the SQL Symphony Concert 3 times in December 2017.' });
 
@@ -214,6 +249,7 @@ const generateGameData = () => {
     licenses.push({ id: mirandaLicenseId, age: 50, height: 66, eye_color: 'green', hair_color: 'red', gender: 'female', plate_number: 'PRADA', car_make: 'Tesla', car_model: 'Model S' });
     people.push({ id: 7777, name: 'Miranda Priestly', license_id: mirandaLicenseId, address_number: 1, address_street_name: 'Fifth Ave', ssn: '777-77-7777' });
     incomes.push({ ssn: '777-77-7777', annual_income: 5000000 });
+    gymMembers.push({ id: '99999', person_id: 7777, name: 'Miranda Priestly', membership_start_date: 20170101, membership_status: 'gold' });
     
     const eventId = 999;
     events.push({ person_id: 7777, event_id: eventId, event_name: 'SQL Symphony Concert', date: 20171204 });

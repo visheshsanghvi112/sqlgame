@@ -4,8 +4,6 @@ import { Case } from '../types';
 import { 
     IconFolder, 
     IconCheck, 
-    IconLock, 
-    IconUnlock,
     IconDatabase, 
     IconChevronLeft, 
     IconChevronRight,
@@ -49,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const [isInterviewOpen, setIsInterviewOpen] = useState(true);
     const [isCyberOpen, setIsCyberOpen] = useState(true);
     const [isFieldOpen, setIsFieldOpen] = useState(true);
-    const [isSchemaOpen, setIsSchemaOpen] = useState(true);
+    const [isSchemaOpen, setIsSchemaOpen] = useState(false);
     
     // Schema Table States (which tables are expanded)
     const [expandedTables, setExpandedTables] = useState<string[]>([]);
@@ -115,31 +113,24 @@ const Sidebar: React.FC<SidebarProps> = ({
         const isCompleted = completedCases.includes(c.id);
         const isActive = c.id === currentCase.id;
         
-        // Determine if "sequentially locked"
-        // Find index in the FULL list to check previous
-        const globalIndex = CASES.findIndex(item => item.id === c.id);
-        const previousCase = globalIndex > 0 ? CASES[globalIndex - 1] : null;
-        const isSequentiallyLocked = previousCase && !completedCases.includes(previousCase.id) && !isCompleted;
+        // All levels are now unlocked to allow players to choose their challenge level
+        const isSequentiallyLocked = false;
 
         return (
             <div className="relative pl-3">
                 {/* Tree Line Horizontal */}
-                <div className={`absolute left-0 top-1/2 w-2 h-px -translate-y-1/2 ${isSequentiallyLocked ? 'bg-terminal-border/10' : 'bg-terminal-border/30'}`}></div>
+                <div className="absolute left-0 top-1/2 w-2 h-px -translate-y-1/2 bg-terminal-border/30"></div>
                 
                 <button 
-                    onClick={() => !isSequentiallyLocked && onCaseSelect(c.id)}
-                    disabled={isSequentiallyLocked}
-                    title={isSequentiallyLocked ? "Complete previous case to unlock" : c.title}
+                    onClick={() => onCaseSelect(c.id)}
+                    title={c.title}
                     className={`
                         group w-full flex items-center gap-3 p-2 rounded-lg text-sm transition-all duration-200 relative overflow-hidden mb-1
                         ${isActive 
                             ? 'bg-terminal-blue/10 text-terminal-text shadow-[inset_0_0_0_1px_rgba(var(--color-terminal-blue-rgb),0.4)] border border-terminal-blue/30' 
                             : ''}
-                        ${!isActive && !isSequentiallyLocked
+                        ${!isActive
                             ? 'text-terminal-text/60 hover:bg-terminal-surface hover:text-terminal-text border border-transparent cursor-pointer'
-                            : ''}
-                        ${isSequentiallyLocked 
-                            ? 'text-terminal-text/20 bg-terminal-bg/20 border border-transparent cursor-not-allowed grayscale' 
                             : ''}
                     `}
                 >
@@ -151,32 +142,26 @@ const Sidebar: React.FC<SidebarProps> = ({
                         flex-shrink-0 w-6 h-6 flex items-center justify-center rounded transition-colors relative
                         ${isCompleted && !isActive ? 'text-terminal-green bg-terminal-green/10' : ''}
                         ${isActive ? 'text-terminal-blue' : ''}
-                        ${!isCompleted && !isActive && !isSequentiallyLocked ? 'text-terminal-text/40 bg-terminal-surface' : ''}
-                        ${isSequentiallyLocked ? 'text-terminal-text/20 bg-terminal-surface/10' : ''}
+                        ${!isCompleted && !isActive ? 'text-terminal-text/40 bg-terminal-surface' : ''}
                     `}>
                         {isCompleted ? <IconCheck className="w-3.5 h-3.5" /> : 
                          isActive ? <IconFolder className="w-3.5 h-3.5" /> :
-                         isSequentiallyLocked ? <IconLock className="w-3.5 h-3.5" /> :
                          <IconFolder className="w-3.5 h-3.5" />}
                     </div>
 
                     {!isCollapsed && (
                         <div className="flex-1 text-left truncate flex justify-between items-center">
-                            <div className={`font-medium truncate pr-2 text-xs ${isSequentiallyLocked ? 'italic' : ''}`}>
+                            <div className="font-medium truncate pr-2 text-xs">
                                 {c.title}
                             </div>
                             
                             {/* Difficulty Dot */}
-                            {difficultyFilter === 'ALL' && !isSequentiallyLocked && (
+                            {difficultyFilter === 'ALL' && (
                                 <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-sm ${
                                     c.difficulty === 'Easy' ? 'bg-green-500' : 
                                     c.difficulty === 'Medium' ? 'bg-yellow-500' : 
                                     c.difficulty === 'Intermediate' ? 'bg-orange-500' : 'bg-red-500'
                                 }`} title={c.difficulty}></div>
-                            )}
-                            
-                            {isSequentiallyLocked && (
-                                <IconLock className="w-3 h-3 text-terminal-text/10" />
                             )}
                         </div>
                     )}
@@ -188,8 +173,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     return (
         <div 
             className={`
-                fixed lg:relative h-full bg-terminal-surface/95 dark:bg-terminal-bg/95 backdrop-blur-md border-r border-terminal-border flex flex-col transition-all duration-300 ease-in-out z-50 shadow-xl
-                ${isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16 w-[92%] max-w-[22rem]' : 'translate-x-0 w-[92%] max-w-[22rem] lg:w-80'}
+                fixed lg:relative h-full bg-terminal-surface/95 dark:bg-terminal-bg/95 backdrop-blur-md border-r border-terminal-border flex flex-col transition-all duration-300 ease-in-out z-[70] lg:z-10 shadow-xl
+                ${isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16 w-[85%] max-w-[18rem]' : 'translate-x-0 w-[85%] max-w-[18rem] lg:w-full'}
             `}
         >
             {/* 1. Header & Logo */}
@@ -205,7 +190,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                     onClick={toggleSidebar}
                     className="p-1.5 rounded-md text-terminal-text/60 hover:bg-terminal-surface hover:text-terminal-text transition-colors"
                 >
-                    {isCollapsed ? <IconChevronRight className="w-5 h-5 lg:block hidden" /> : <IconChevronLeft className="w-4 h-4" />}
+                    {isCollapsed ? <IconChevronRight className="w-5 h-5 lg:block hidden" /> : (
+                        <div className="flex items-center gap-1">
+                            <span className="lg:hidden text-[10px] font-bold mr-1">CLOSE</span>
+                            <IconChevronLeft className="w-4 h-4" />
+                        </div>
+                    )}
                     {isCollapsed && <IconChevronRight className="w-5 h-5 lg:hidden block" />}
                 </button>
             </div>
@@ -257,7 +247,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {academyCases.length > 0 && (
                         <div className="mt-2">
                             <SectionHeader 
-                                title="Training Modules" 
+                                title="Recruit Academy" 
                                 isOpen={isAcademyOpen} 
                                 setIsOpen={setIsAcademyOpen}
                                 count={academyCases.filter(c => completedCases.includes(c.id)).length}
@@ -278,7 +268,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {interviewCases.length > 0 && (
                         <div className="mt-2">
                             <SectionHeader 
-                                title="Interview Prep" 
+                                title="Intelligence Bureau" 
                                 isOpen={isInterviewOpen} 
                                 setIsOpen={setIsInterviewOpen}
                                 count={interviewCases.filter(c => completedCases.includes(c.id)).length}
@@ -299,7 +289,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {cyberCases.length > 0 && (
                         <div className="mt-2">
                             <SectionHeader 
-                                title="Cyber Warfare" 
+                                title="Special Operations" 
                                 isOpen={isCyberOpen} 
                                 setIsOpen={setIsCyberOpen}
                                 count={cyberCases.filter(c => completedCases.includes(c.id)).length}
@@ -325,7 +315,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {fieldCases.length > 0 && (
                         <div>
                             <SectionHeader 
-                                title="Active Investigations" 
+                                title="Field Bureau" 
                                 isOpen={isFieldOpen} 
                                 setIsOpen={setIsFieldOpen}
                                 count={fieldCases.filter(c => completedCases.includes(c.id)).length}

@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-import { sql } from '@codemirror/lang-sql';
+import { sql, SQLite } from '@codemirror/lang-sql';
 import { EditorView } from '@codemirror/view';
 import { autocompletion, CompletionContext } from '@codemirror/autocomplete';
+import { bracketMatching } from '@codemirror/language';
 import { IconPlay, IconCheck, IconTrash } from './Icons';
 import { TABLES } from '../constants';
 
@@ -26,29 +27,56 @@ const sqlSchema = TABLES.reduce((acc, table) => {
     return acc;
 }, {} as Record<string, string[]>);
 
-// Custom Autocomplete Source (Lowercase & Snippets)
+// Custom Autocomplete Source (UPPERCASE Keywords, Snippets, & Schema)
 const customCompletions = (context: CompletionContext) => {
     let word = context.matchBefore(/\w*/)
     if (!word || (word.from === word.to && !context.explicit)) return null
     
+    // Add Schema (Tables and Columns)
+    const schemaCompletions = Object.entries(sqlSchema).flatMap(([table, columns]) => {
+        return [
+            { label: table, type: 'namespace', boost: 90 },
+            ...columns.map(col => ({ label: col, type: 'property', boost: 85 }))
+        ];
+    });
+
     return {
         from: word.from,
         options: [
-            // Lowercase Keywords
-            { label: 'select', type: 'keyword', boost: 99 },
-            { label: 'from', type: 'keyword', boost: 99 },
-            { label: 'where', type: 'keyword', boost: 99 },
-            { label: 'limit', type: 'keyword', boost: 99 },
-            { label: 'order by', type: 'keyword', boost: 99 },
-            { label: 'group by', type: 'keyword', boost: 99 },
-            { label: 'join', type: 'keyword', boost: 99 },
-            { label: 'left join', type: 'keyword', boost: 99 },
-            { label: 'count', type: 'function', boost: 99 },
-            { label: 'distinct', type: 'keyword', boost: 99 },
+            // UPPERCASE Keywords for professional practice
+            { label: 'SELECT', type: 'keyword', boost: 99 },
+            { label: 'FROM', type: 'keyword', boost: 99 },
+            { label: 'WHERE', type: 'keyword', boost: 99 },
+            { label: 'INSERT INTO', type: 'keyword', boost: 99 },
+            { label: 'UPDATE', type: 'keyword', boost: 99 },
+            { label: 'DELETE FROM', type: 'keyword', boost: 99 },
+            { label: 'LIMIT', type: 'keyword', boost: 99 },
+            { label: 'ORDER BY', type: 'keyword', boost: 99 },
+            { label: 'GROUP BY', type: 'keyword', boost: 99 },
+            { label: 'HAVING', type: 'keyword', boost: 99 },
+            { label: 'JOIN', type: 'keyword', boost: 99 },
+            { label: 'LEFT JOIN', type: 'keyword', boost: 99 },
+            { label: 'COUNT', type: 'function', boost: 99 },
+            { label: 'SUM', type: 'function', boost: 99 },
+            { label: 'AVG', type: 'function', boost: 99 },
+            { label: 'DISTINCT', type: 'keyword', boost: 99 },
+            { label: 'AS', type: 'keyword', boost: 99 },
+            { label: 'AND', type: 'keyword', boost: 99 },
+            { label: 'OR', type: 'keyword', boost: 99 },
+            { label: 'LIKE', type: 'keyword', boost: 99 },
+            { label: 'IN', type: 'keyword', boost: 99 },
+            { label: 'BETWEEN', type: 'keyword', boost: 99 },
+            { label: 'CASE', type: 'keyword', boost: 99 },
+            { label: 'WHEN', type: 'keyword', boost: 99 },
+            { label: 'THEN', type: 'keyword', boost: 99 },
+            { label: 'ELSE', type: 'keyword', boost: 99 },
+            { label: 'END', type: 'keyword', boost: 99 },
             
-            // Snippets
+            // Snippets (Upper)
             { label: 'sf', type: 'text', apply: 'SELECT * FROM ', detail: 'SELECT * FROM', boost: 100 },
             { label: 'sc', type: 'text', apply: 'SELECT COUNT(*) FROM ', detail: 'Count rows', boost: 100 },
+            
+            ...schemaCompletions
         ]
     }
 }
@@ -58,12 +86,12 @@ const terminalTheme = EditorView.theme({
     "&": {
         backgroundColor: "transparent",
         height: "100%",
-        color: "#e0e0e0", // Lighter text for better contrast
+        color: "#e0e0e0", 
         fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
         fontSize: "14px",
     },
     ".cm-content": {
-        caretColor: "#00ff00", // Bright green cursor
+        caretColor: "#00ff00",
     },
     ".cm-gutters": {
         backgroundColor: "rgba(0,0,0,0.2)",
@@ -86,19 +114,52 @@ const terminalTheme = EditorView.theme({
     ".cm-selectionBackground, ::selection": {
         backgroundColor: "rgba(0,100,255, 0.3) !important",
     },
+    // SQL Highlighting Overrides - PRO LEVEL
+    ".tok-keyword": {
+        color: "#569cd6",
+        fontWeight: "bold",
+    },
+    ".tok-function": {
+        color: "#dcdcaa",
+        fontWeight: "bold",
+    },
+    ".tok-string": {
+        color: "#ce9178",
+    },
+    ".tok-number": {
+        color: "#b5cea8",
+    },
+    ".tok-comment": {
+        color: "#6a9955",
+        fontStyle: "italic",
+    },
+    ".tok-propertyName": {
+        color: "#9cdcfe",
+    },
+    ".tok-variableName": {
+        color: "#9cdcfe",
+    },
+    ".tok-operator": {
+        color: "#d4d4d4",
+    },
+    "&.cm-focused": {
+        outline: "none",
+    },
     // Autocomplete Dropdown Styling
     ".cm-tooltip": {
         backgroundColor: "#1a1a1a !important",
         border: "1px solid #333 !important",
         borderRadius: "4px",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
     },
     ".cm-tooltip-autocomplete": {
         "& > ul > li": {
             fontFamily: "monospace",
-            padding: "2px 8px",
+            padding: "4px 12px",
+            fontSize: "12px",
         },
         "& > ul > li[aria-selected]": {
-            backgroundColor: "#004400 !important",
+            backgroundColor: "#2e7d32 !important",
             color: "#fff !important",
         },
     }
@@ -109,45 +170,77 @@ const lightTerminalTheme = EditorView.theme({
     "&": {
         backgroundColor: "transparent",
         height: "100%",
-        color: "#334155", // Slate 700
+        color: "#334155", 
         fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
         fontSize: "14px",
     },
     ".cm-content": {
-        caretColor: "#2563EB", // Blue 600
+        caretColor: "#2563EB",
     },
     ".cm-gutters": {
-        backgroundColor: "#F8FAFC", // Slate 50
-        color: "#94A3B8", // Slate 400
-        borderRight: "1px solid #E2E8F0", // Slate 200
+        backgroundColor: "#F8FAFC",
+        color: "#94A3B8",
+        borderRight: "1px solid #E2E8F0",
     },
     ".cm-activeLineGutter": {
-        backgroundColor: "#E2E8F0", // Slate 200
-        color: "#0F172A", // Slate 900
+        backgroundColor: "#E2E8F0",
+        color: "#0F172A",
     },
     "&.cm-focused .cm-cursor": {
         borderLeftColor: "#2563EB",
     },
     ".cm-activeLine": {
-        backgroundColor: "#F1F5F9", // Slate 100
+        backgroundColor: "#F1F5F9",
     },
     ".cm-selectionMatch": {
         backgroundColor: "rgba(37, 99, 235, 0.2)",
     },
     ".cm-selectionBackground, ::selection": {
-        backgroundColor: "#DBEAFE !important", // Blue 100
+        backgroundColor: "#DBEAFE !important",
+    },
+    // SQL Highlighting Overrides - PRO LEVEL
+    ".tok-keyword": {
+        color: "#0000ff",
+        fontWeight: "bold",
+    },
+    ".tok-function": {
+        color: "#795e26",
+        fontWeight: "bold",
+    },
+    ".tok-string": {
+        color: "#a31515",
+    },
+    ".tok-number": {
+        color: "#098658",
+    },
+    ".tok-comment": {
+        color: "#008000",
+        fontStyle: "italic",
+    },
+    ".tok-propertyName": {
+        color: "#001080",
+    },
+    ".tok-variableName": {
+        color: "#001080",
+    },
+    ".tok-operator": {
+        color: "#333",
+    },
+    "&.cm-focused": {
+        outline: "none",
     },
     // Autocomplete Dropdown Styling
     ".cm-tooltip": {
         backgroundColor: "#ffffff !important",
         border: "1px solid #E2E8F0 !important",
         borderRadius: "4px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
     },
     ".cm-tooltip-autocomplete": {
         "& > ul > li": {
             fontFamily: "monospace",
-            padding: "2px 8px",
+            padding: "4px 12px",
+            fontSize: "12px",
             color: "#334155",
         },
         "& > ul > li[aria-selected]": {
@@ -184,7 +277,7 @@ const SqlEditor: React.FC<SqlEditorProps> = ({
     });
 
     return (
-        <div className="flex-[1.2] flex flex-col min-h-[230px] border-b border-terminal-border bg-terminal-bg relative group transition-all">
+        <div className="h-full flex flex-col min-h-[230px] border-b border-terminal-border bg-terminal-bg relative group transition-all">
             {/* Toolbar */}
             <div className="bg-terminal-surface/80 px-2 sm:px-4 py-2 flex flex-wrap justify-between items-center border-b border-terminal-border backdrop-blur-md z-10 gap-2">
                 <div className="flex items-center gap-2 sm:gap-4">
@@ -242,8 +335,9 @@ const SqlEditor: React.FC<SqlEditorProps> = ({
                     height="100%"
                     theme={theme === 'dark' ? terminalTheme : lightTerminalTheme}
                     extensions={[
-                        sql({ schema: sqlSchema }),
-                        autocompletion({ override: [customCompletions] }),
+                        sql({ schema: sqlSchema, upperCaseKeywords: true }),
+                        bracketMatching(),
+                        autocompletion({ override: [customCompletions] }), // Still using override but we trust our expanded list
                         keyMapExtension,
                         EditorView.lineWrapping
                     ]}
